@@ -15,15 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'tool_genmobilecss', language 'en'
+ * An initial form with information about the plugin + a button to
+ * start the CSS downloading + processing
  *
  * @package    tool_genmobilecss
  * @copyright  2020 Alison of Sheesania
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Generate custom CSS for Moodle Mobile';
-$string['introtextlabel'] = 'Intro';
-$string['introtext'] = 'Some information about the plugin';
-$string['downloadmobilecss'] = 'Download latest mobile CSS';
-$string['cachedef_mobilecss'] = 'The current CSS file for the Moodle Mobile app';
+namespace tool_genmobilecss;
+
+defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
+
+require_once($CFG->libdir.'/formslib.php');
+
+class intro_form extends \moodleform {
+    public function definition() {
+        $mform = $this->_form;
+        $mform->addElement('static', 'intro', get_string('introtextlabel', 'tool_genmobilecss'),
+                get_string('introtext', 'tool_genmobilecss'));
+        $this->add_action_buttons(false, get_string('downloadmobilecss', 'tool_genmobilecss'));
+    }
+}

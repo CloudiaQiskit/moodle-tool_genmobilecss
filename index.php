@@ -41,6 +41,25 @@ $PAGE->set_heading($pagetitle);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle);
-echo 'hello';
+
+$cache = cache::make('tool_genmobilecss', 'mobilecss');
+
+$introform = new \tool_genmobilecss\intro_form();
+if ($formdata = $introform->get_data()) {
+    $response = file_get_contents('https://mobileapp.moodledemo.net/build/main.css');
+    $cache->set('mobilecss', $response);
+    $cssparser = new Sabberworm\CSS\Parser($response);
+    $cssdoc = $cssparser->parse();
+    foreach($cssdoc->getAllRuleSets() as $ruleset) {
+        foreach($ruleset->getRules() as $rule) {
+            if($rule->getValue() instanceof Sabberworm\CSS\Value\Color) {
+                echo 'color';
+            }
+        }
+    }
+} else {
+    $introform->display();
+}
+
 echo $OUTPUT->footer();
 die();

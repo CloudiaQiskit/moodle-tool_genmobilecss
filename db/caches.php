@@ -15,15 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'tool_genmobilecss', language 'en'
+ * Caching settings
  *
  * @package    tool_genmobilecss
  * @copyright  2020 Alison of Sheesania
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
  */
-
-$string['pluginname'] = 'Generate custom CSS for Moodle Mobile';
-$string['introtextlabel'] = 'Intro';
-$string['introtext'] = 'Some information about the plugin';
-$string['downloadmobilecss'] = 'Download latest mobile CSS';
-$string['cachedef_mobilecss'] = 'The current CSS file for the Moodle Mobile app';
+defined('MOODLE_INTERNAL') || die;
+$definitions = [
+        'mobilecss' => [
+                'mode' => cache_store::MODE_APPLICATION
+        ]
+];
