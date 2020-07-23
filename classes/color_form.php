@@ -36,38 +36,47 @@ require_once($CFG->libdir.'/formslib.php');
 class color_form extends \moodleform {
     private $colors = array();
 
-    public function setCss(string $css) {
-        $cssparser = new Parser($css);
-        $cssdoc = $cssparser->parse();
-        foreach($cssdoc->getAllRuleSets() as $ruleset) {
-            foreach($ruleset->getRules() as $rule) {
-                $value = $rule->getValue();
-                if($value instanceof Color) {
-                    $color = (string) $value;
-                    if (!array_key_exists($color, $this->colors)) {
-                        $this->colors[$color] = new color_info();
-                    }
-                    $this->colors[$color]->usedcount++;
-                    if ($ruleset instanceof AtRuleSet) {
-                        $this->colors[$color]->rules[] = $ruleset->atRuleName() . ' -> ' . $rule->getRule();
-                    } else if ($ruleset instanceof DeclarationBlock) {
-                        $this->colors[$color]->rules[] =
-                                implode(', ', $ruleset->getSelectors()) . ' -> ' . $rule->getRule();
+    public function __construct(string $css = null) {
+        if (!is_null($css)) {
+            $cssparser = new Parser($css);
+            $cssdoc = $cssparser->parse();
+            foreach($cssdoc->getAllRuleSets() as $ruleset) {
+                foreach($ruleset->getRules() as $rule) {
+                    $value = $rule->getValue();
+                    if($value instanceof Color) {
+                        $color = (string) $value;
+                        if (!array_key_exists($color, $this->colors)) {
+                            $this->colors[$color] = new color_info();
+                        }
+                        $this->colors[$color]->usedcount++;
                     }
                 }
             }
+            uasort($this->colors, function($a, $b)
+            {
+                return $b->usedcount - $a->usedcount;
+            });
         }
-
-        foreach($this->colors as $key => $value) {
-            echo "<div>" . $key . " - " . $value->usedcount . " - " . implode('; ', $value->rules) . "</div>";
-        }
+        parent::__construct();
     }
 
     public function definition() {
+        $mform = $this->_form;
+        foreach($this->colors as $colorname => $colorinfo) {
+            $mform->addElement('text', 'text-' . $colorname, $colorname);
+            $mform->setType('text-' . $colorname, PARAM_RAW);
+            $infogroup = array();
+            $infogroup[] =& $mform->createElement('html',
+                    '<div style="background-color: ' . $colorname . '; ' .
+                    'width: 30px; height: 30px; margin-right: 10px; margin-bottom: 10px; outline: solid"></div>');
+            $infogroup[] =& $mform->createElement('static', 'description-' . $colorname, '',
+                    $colorinfo->usedcount . " " . get_string('uses', 'tool_genmobilecss'));
+            $mform->addGroup($infogroup, 'info-' . $colorname, '', '', false);
+        }
+        $this->add_action_buttons(false, get_string('downloadmobilecss', 'tool_genmobilecss'));
     }
 }
 
 class color_info {
     public $usedcount = 0;
-    public $rules = array();
 }

@@ -45,11 +45,11 @@ echo $OUTPUT->heading($pagetitle);
 $cache = cache::make('tool_genmobilecss', 'mobilecss');
 
 $introform = new \tool_genmobilecss\intro_form();
-$colorform = new \tool_genmobilecss\color_form();
 if ($formdata = $introform->get_data()) {
     $response = file_get_contents('https://mobileapp.moodledemo.net/build/main.css');
     $cache->set('mobilecss', $response);
-    $colorform->setCss($response);
+    $colorform = new \tool_genmobilecss\color_form($response);
+    $colorform->display();
 } else {
     $introform->display();
 }
