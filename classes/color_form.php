@@ -24,6 +24,11 @@
 
 namespace tool_genmobilecss;
 
+use \Sabberworm\CSS\Parser;
+use \Sabberworm\CSS\Value\Color;
+use \Sabberworm\CSS\RuleSet\DeclarationBlock;
+use \Sabberworm\CSS\RuleSet\AtRuleSet;
+
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->libdir.'/formslib.php');
@@ -32,22 +37,37 @@ class color_form extends \moodleform {
     private $colors = array();
 
     public function setCss(string $css) {
-        $cssparser = new \Sabberworm\CSS\Parser($css);
+        $cssparser = new Parser($css);
         $cssdoc = $cssparser->parse();
         foreach($cssdoc->getAllRuleSets() as $ruleset) {
             foreach($ruleset->getRules() as $rule) {
                 $value = $rule->getValue();
-                if($value instanceof \Sabberworm\CSS\Value\Color) {
-                    $this->colors[(string) $value] = true;
+                if($value instanceof Color) {
+                    $color = (string) $value;
+                    if (!array_key_exists($color, $this->colors)) {
+                        $this->colors[$color] = new color_info();
+                    }
+                    $this->colors[$color]->usedcount++;
+                    if ($ruleset instanceof AtRuleSet) {
+                        $this->colors[$color]->rules[] = $ruleset->atRuleName() . ' -> ' . $rule->getRule();
+                    } else if ($ruleset instanceof DeclarationBlock) {
+                        $this->colors[$color]->rules[] =
+                                implode(', ', $ruleset->getSelectors()) . ' -> ' . $rule->getRule();
+                    }
                 }
             }
         }
 
         foreach($this->colors as $key => $value) {
-            echo $key . "\n";
+            echo "<div>" . $key . " - " . $value->usedcount . " - " . implode('; ', $value->rules) . "</div>";
         }
     }
 
     public function definition() {
     }
+}
+
+class color_info {
+    public $usedcount = 0;
+    public $rules = array();
 }
