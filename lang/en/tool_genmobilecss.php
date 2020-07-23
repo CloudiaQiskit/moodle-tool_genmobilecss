@@ -28,3 +28,5 @@ $string['introtext'] = 'Some information about the plugin';
 $string['downloadmobilecss'] = 'Download latest mobile CSS';
 $string['cachedef_mobilecss'] = 'The current CSS file for the Moodle Mobile app';
 $string['uses'] = 'uses';
+$string['colorformdesc'] = 'Some help text for the color form';
+$string['colorformsubmit'] = 'Generate custom CSS file with these colors';

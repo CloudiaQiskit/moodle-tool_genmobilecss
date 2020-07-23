@@ -62,6 +62,7 @@ class color_form extends \moodleform {
 
     public function definition() {
         $mform = $this->_form;
+        $mform->addElement('static', 'intro', '', get_string('colorformdesc', 'tool_genmobilecss'));
         foreach($this->colors as $colorname => $colorinfo) {
             $mform->addElement('text', 'text-' . $colorname, $colorname);
             $mform->setType('text-' . $colorname, PARAM_RAW);
@@ -73,7 +74,7 @@ class color_form extends \moodleform {
                     $colorinfo->usedcount . " " . get_string('uses', 'tool_genmobilecss'));
             $mform->addGroup($infogroup, 'info-' . $colorname, '', '', false);
         }
-        $this->add_action_buttons(false, get_string('downloadmobilecss', 'tool_genmobilecss'));
+        $this->add_action_buttons(false, get_string('colorformsubmit', 'tool_genmobilecss'));
     }
 }
 
