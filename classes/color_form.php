@@ -77,6 +77,8 @@ class color_form extends \moodleform {
                     $colorinfo->usedcount . " " . get_string('uses', 'tool_genmobilecss'));
             $mform->addGroup($infogroup, 'info-' . $colorname, '', '', false);
         }
+        $mform->addElement('hidden', 'step', '3');
+        $mform->setType('step', PARAM_INT);
         $this->add_action_buttons(false, get_string('colorformsubmit', 'tool_genmobilecss'));
     }
 }

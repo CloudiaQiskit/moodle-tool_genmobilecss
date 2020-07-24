@@ -53,6 +53,8 @@ class conclusion_form extends \moodleform {
         $mform = $this->_form;
         $mform->addElement('static', 'url', get_string('urldesc', 'tool_genmobilecss'), $this->cssurl);
         $mform->addElement('static', 'instructions', '', get_string('urlinstructions', 'tool_genmobilecss'));
+        $mform->addElement('hidden', 'step', '4');
+        $mform->setType('step', PARAM_INT);
         $this->add_action_buttons(false, get_string('gotosettings', 'tool_genmobilecss'));
     }
 

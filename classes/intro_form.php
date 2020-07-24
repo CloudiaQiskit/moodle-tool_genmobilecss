@@ -34,6 +34,8 @@ class intro_form extends \moodleform {
         $mform = $this->_form;
         $mform->addElement('static', 'intro', get_string('introtextlabel', 'tool_genmobilecss'),
                 get_string('introtext', 'tool_genmobilecss'));
+        $mform->addElement('hidden', 'step', '2');
+        $mform->setType('step', PARAM_INT);
         $this->add_action_buttons(false, get_string('downloadmobilecss', 'tool_genmobilecss'));
     }
 }

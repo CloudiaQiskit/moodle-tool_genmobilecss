@@ -39,21 +39,27 @@ $PAGE->set_title($pagetitle);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_heading($pagetitle);
 
-$cache = cache::make('tool_genmobilecss', 'mobilecss');
+$step = optional_param('step', 1, PARAM_INT);
 
-$introform = new \tool_genmobilecss\intro_form();
-if ($introform->get_data()) {
+if ($step == 1) {
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading($pagetitle);
+    $introform = new \tool_genmobilecss\intro_form();
+    $introform->display();
+} else if ($step == 2) {
     $response = file_get_contents('https://mobileapp.moodledemo.net/build/main.css');
+    $cache = cache::make('tool_genmobilecss', 'mobilecss');
     $cache->set('mobilecss', $response);
     $colorform = new \tool_genmobilecss\color_form($response);
     echo $OUTPUT->header();
     echo $OUTPUT->heading($pagetitle);
     $colorform->display();
-} else if ($formdata = (new \tool_genmobilecss\color_form())->get_data()) {
+} else if ($step == 3) {
+    $formdata = (new \tool_genmobilecss\color_form())->get_data();
     $colorstoreplace = array();
     foreach(get_object_vars($formdata) as $oldcolor => $newcolor) {
         if (preg_match('/^#\d{6}$/', $newcolor) ||
-            preg_match('/^#\d{3}$/', $newcolor)) {
+                preg_match('/^#\d{3}$/', $newcolor)) {
             $colorstoreplace[$oldcolor] = $newcolor;
         }
     }
@@ -61,14 +67,10 @@ if ($introform->get_data()) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading($pagetitle);
     $conclusionform->display();
-} else if ((new \tool_genmobilecss\conclusion_form())->get_data()) {
+} else if ($step == 4) {
     $mobilesettingsurl = new moodle_url('/admin/settings.php', ['section' => 'mobileappearance']);
     redirect($mobilesettingsurl);
     die();
-} else {
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading($pagetitle);
-    $introform->display();
 }
 
 echo $OUTPUT->footer();
