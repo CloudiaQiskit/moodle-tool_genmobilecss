@@ -26,8 +26,6 @@ namespace tool_genmobilecss;
 
 use \Sabberworm\CSS\Parser;
 use \Sabberworm\CSS\Value\Color;
-use \Sabberworm\CSS\RuleSet\DeclarationBlock;
-use \Sabberworm\CSS\RuleSet\AtRuleSet;
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
