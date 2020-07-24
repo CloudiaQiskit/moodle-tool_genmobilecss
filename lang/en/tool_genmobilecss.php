@@ -30,3 +30,7 @@ $string['cachedef_mobilecss'] = 'The current CSS file for the Moodle Mobile app'
 $string['uses'] = 'uses';
 $string['colorformdesc'] = 'Some help text for the color form';
 $string['colorformsubmit'] = 'Generate custom CSS file with these colors';
+$string['urldesc'] = 'URL for your custom mobile CSS';
+$string['urlinstructions'] = 'Copy this URL, click the button below to go to the mobile appearance settings, then paste the URL '.
+        'in the CSS setting and save your changes.';
+$string['gotosettings'] = 'Go to mobile appearance settings';
