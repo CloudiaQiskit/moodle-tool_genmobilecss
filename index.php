@@ -43,15 +43,20 @@ $cache = cache::make('tool_genmobilecss', 'mobilecss');
 
 $introform = new \tool_genmobilecss\intro_form();
 if ($introform->get_data()) {
-    //$response = file_get_contents('https://mobileapp.moodledemo.net/build/main.css');
-    $response = '.heemin {color: #ffffff;}';
+    $response = file_get_contents('https://mobileapp.moodledemo.net/build/main.css');
     $cache->set('mobilecss', $response);
     $colorform = new \tool_genmobilecss\color_form($response);
     echo $OUTPUT->header();
     echo $OUTPUT->heading($pagetitle);
     $colorform->display();
 } else if ($formdata = (new \tool_genmobilecss\color_form())->get_data()) {
-    $colorstoreplace['#fff'] = '#138f87';
+    $colorstoreplace = array();
+    foreach(get_object_vars($formdata) as $oldcolor => $newcolor) {
+        if (preg_match('/^#\d{6}$/', $newcolor) ||
+            preg_match('/^#\d{3}$/', $newcolor)) {
+            $colorstoreplace[$oldcolor] = $newcolor;
+        }
+    }
     $conclusionform = new \tool_genmobilecss\conclusion_form($colorstoreplace);
     echo $OUTPUT->header();
     echo $OUTPUT->heading($pagetitle);

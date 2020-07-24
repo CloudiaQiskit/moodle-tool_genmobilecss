@@ -35,7 +35,11 @@ class color_form extends \moodleform {
     private $colors = array();
 
     public function __construct(string $css = null) {
-        if (!is_null($css)) {
+        $cache = \cache::make('tool_genmobilecss', 'colors');
+
+        if(is_null($css)) {
+            $this->colors = $cache->get('colors');
+        } else {
             $cssparser = new Parser($css);
             $cssdoc = $cssparser->parse();
             foreach($cssdoc->getAllRuleSets() as $ruleset) {
@@ -54,6 +58,7 @@ class color_form extends \moodleform {
             {
                 return $b->usedcount - $a->usedcount;
             });
+            $cache->set('colors', $this->colors);
         }
         parent::__construct();
     }
@@ -62,8 +67,8 @@ class color_form extends \moodleform {
         $mform = $this->_form;
         $mform->addElement('static', 'intro', '', get_string('colorformdesc', 'tool_genmobilecss'));
         foreach($this->colors as $colorname => $colorinfo) {
-            $mform->addElement('text', 'text-' . $colorname, $colorname);
-            $mform->setType('text-' . $colorname, PARAM_RAW);
+            $mform->addElement('text', $colorname, $colorname);
+            $mform->setType($colorname, PARAM_TEXT);
             $infogroup = array();
             $infogroup[] =& $mform->createElement('html',
                     '<div style="background-color: ' . $colorname . '; ' .

@@ -26,5 +26,8 @@ defined('MOODLE_INTERNAL') || die;
 $definitions = [
         'mobilecss' => [
                 'mode' => cache_store::MODE_APPLICATION
+        ],
+        'colors' => [
+                'mode' => cache_store::MODE_APPLICATION
         ]
 ];
