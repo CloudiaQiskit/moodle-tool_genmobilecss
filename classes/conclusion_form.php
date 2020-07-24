@@ -24,6 +24,9 @@
 
 namespace tool_genmobilecss;
 
+use \Sabberworm\CSS\Parser;
+use \Sabberworm\CSS\Value\Color;
+
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->libdir.'/formslib.php');
@@ -32,6 +35,42 @@ class conclusion_form extends \moodleform {
     private $cssurl = '';
 
     public function __construct(array $colorstoreplace = null) {
+        if (!is_null($colorstoreplace)) {
+            $newcss = $this->generate_css($colorstoreplace);
+            $this->cssurl = $this->write_css_file($newcss);
+        }
+
+        parent::__construct();
+    }
+
+    public function definition() {
+        $mform = $this->_form;
+        $mform->addElement('static', 'url', get_string('urldesc', 'tool_genmobilecss'), $this->cssurl);
+        $mform->addElement('static', 'instructions', '', get_string('urlinstructions', 'tool_genmobilecss'));
+        $this->add_action_buttons(false, get_string('gotosettings', 'tool_genmobilecss'));
+    }
+
+    private function generate_css(array $colorstoreplace) {
+        $cache = \cache::make('tool_genmobilecss', 'mobilecss');
+        $oldcss = $cache->get('mobilecss');
+        $cssparser = new Parser($oldcss);
+        $cssdoc = $cssparser->parse();
+
+        foreach($cssdoc->getAllRuleSets() as $ruleset) {
+            foreach($ruleset->getRules() as $rule) {
+                $value = $rule->getValue();
+                if($value instanceof Color) {
+                    $color = (string) $value;
+                    if (array_key_exists($color, $colorstoreplace)) {
+                        echo $color . ' to ' . $colorstoreplace[$color];
+                    }
+                }
+            }
+        }
+        return $oldcss;
+    }
+
+    private function write_css_file(string $css) {
         global $CFG;
 
         $context = \context_system::instance();
@@ -48,7 +87,7 @@ class conclusion_form extends \moodleform {
         if ($file) {
             $file->delete();
         }
-        $fs->create_file_from_string($fileinfo, 'hello heemins');
+        $fs->create_file_from_string($fileinfo, $css);
 
         $fileurl = \moodle_url::make_pluginfile_url(
                 $fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
@@ -56,18 +95,9 @@ class conclusion_form extends \moodleform {
 
         $currentcsslastchar = substr($CFG->mobilecssurl, -1);
         if (strcmp($currentcsslastchar, '0') == 0) {
-            $this->cssurl = $fileurl . '#1';
+            return $fileurl . '#1';
         } else {
-            $this->cssurl = $fileurl . '#0';
+            return $fileurl . '#0';
         }
-
-        parent::__construct();
-    }
-
-    public function definition() {
-        $mform = $this->_form;
-        $mform->addElement('static', 'url', get_string('urldesc', 'tool_genmobilecss'), $this->cssurl);
-        $mform->addElement('static', 'instructions', '', get_string('urlinstructions', 'tool_genmobilecss'));
-        $this->add_action_buttons(false, get_string('gotosettings', 'tool_genmobilecss'));
     }
 }

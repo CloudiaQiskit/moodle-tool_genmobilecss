@@ -39,9 +39,6 @@ $PAGE->set_title($pagetitle);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_heading($pagetitle);
 
-echo $OUTPUT->header();
-echo $OUTPUT->heading($pagetitle);
-
 $cache = cache::make('tool_genmobilecss', 'mobilecss');
 
 $introform = new \tool_genmobilecss\intro_form();
@@ -50,12 +47,22 @@ if ($introform->get_data()) {
     $response = '.heemin {color: #ffffff;}';
     $cache->set('mobilecss', $response);
     $colorform = new \tool_genmobilecss\color_form($response);
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading($pagetitle);
     $colorform->display();
 } else if ($formdata = (new \tool_genmobilecss\color_form())->get_data()) {
-    $colorstoreplace['#f98012'] = '#138f87';
+    $colorstoreplace['#fff'] = '#138f87';
     $conclusionform = new \tool_genmobilecss\conclusion_form($colorstoreplace);
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading($pagetitle);
     $conclusionform->display();
+} else if ((new \tool_genmobilecss\conclusion_form())->get_data()) {
+    $mobilesettingsurl = new moodle_url('/admin/settings.php', ['section' => 'mobileappearance']);
+    redirect($mobilesettingsurl);
+    die();
 } else {
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading($pagetitle);
     $introform->display();
 }
 
