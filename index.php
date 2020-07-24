@@ -44,17 +44,36 @@ $step = optional_param('step', 1, PARAM_INT);
 if ($step == 1) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading($pagetitle);
+    intro_step();
+} else if ($step == 2) {
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading($pagetitle);
+    choose_custom_colors_step();
+} else if ($step == 3) {
+    echo $OUTPUT->header();
+    echo $OUTPUT->heading($pagetitle);
+    generate_custom_css_step();
+} else if ($step == 4) {
+    redirect_step();
+}
+
+echo $OUTPUT->footer();
+die();
+
+function intro_step() {
     $introform = new \tool_genmobilecss\intro_form();
     $introform->display();
-} else if ($step == 2) {
+}
+
+function choose_custom_colors_step() {
     $response = file_get_contents('https://mobileapp.moodledemo.net/build/main.css');
     $cache = cache::make('tool_genmobilecss', 'mobilecss');
     $cache->set('mobilecss', $response);
     $colorform = new \tool_genmobilecss\color_form($response);
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading($pagetitle);
     $colorform->display();
-} else if ($step == 3) {
+}
+
+function generate_custom_css_step() {
     $formdata = (new \tool_genmobilecss\color_form())->get_data();
     $colorstoreplace = array();
     foreach(get_object_vars($formdata) as $oldcolor => $newcolor) {
@@ -64,14 +83,11 @@ if ($step == 1) {
         }
     }
     $conclusionform = new \tool_genmobilecss\conclusion_form($colorstoreplace);
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading($pagetitle);
     $conclusionform->display();
-} else if ($step == 4) {
+}
+
+function redirect_step() {
     $mobilesettingsurl = new moodle_url('/admin/settings.php', ['section' => 'mobileappearance']);
     redirect($mobilesettingsurl);
     die();
 }
-
-echo $OUTPUT->footer();
-die();
