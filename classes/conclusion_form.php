@@ -26,6 +26,12 @@ namespace tool_genmobilecss;
 
 use \Sabberworm\CSS\Parser;
 use \Sabberworm\CSS\Value\Color;
+use \Sabberworm\CSS\CSSList\Document;
+use \Sabberworm\CSS\RuleSet\DeclarationBlock;
+use \Sabberworm\CSS\RuleSet\AtRuleSet;
+use \Sabberworm\CSS\Rule\Rule;
+use Sabberworm\CSS\Parsing\ParserState;
+use Sabberworm\CSS\Settings;
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
@@ -56,18 +62,35 @@ class conclusion_form extends \moodleform {
         $cssparser = new Parser($oldcss);
         $cssdoc = $cssparser->parse();
 
+        $newcss = new Document();
+
         foreach($cssdoc->getAllRuleSets() as $ruleset) {
             foreach($ruleset->getRules() as $rule) {
                 $value = $rule->getValue();
                 if($value instanceof Color) {
                     $color = (string) $value;
                     if (array_key_exists($color, $colorstoreplace)) {
-                        echo $color . ' to ' . $colorstoreplace[$color];
+                        $newcolor = Color::parse(new ParserState($colorstoreplace[$color], Settings::create()));
+
+                        $newruleset = null;
+                        if ($ruleset instanceof AtRuleSet) {
+                            $newruleset = new AtRuleSet($ruleset->atRuleName(), $ruleset->atRuleArgs());
+                        } else if ($ruleset instanceof DeclarationBlock) {
+                            $newruleset = new DeclarationBlock();
+                            $newruleset->setSelectors($ruleset->getSelectors());
+                        }
+
+                        $newrule = new Rule($rule->getRule());
+                        $newrule->addValue($newcolor);
+                        $newrule->setIsImportant(true);
+
+                        $newruleset->addRule($newrule);
+                        $newcss->append($newruleset);
                     }
                 }
             }
         }
-        return $oldcss;
+        return $newcss->render();
     }
 
     private function write_css_file(string $css) {
