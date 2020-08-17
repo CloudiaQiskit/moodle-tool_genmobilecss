@@ -56,9 +56,6 @@ define([
             opacity: true,
             hue: true,
             interaction: {
-              hex: true,
-              rgba: false,
-              hsva: false,
               input: true,
               save: true,
               cancel: true,
