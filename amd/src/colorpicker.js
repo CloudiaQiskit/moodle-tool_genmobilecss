@@ -31,15 +31,17 @@ define([
         ".colorpicker-text input"
       );
       inputElements.forEach((input) => {
-        const forColor = input.getAttribute("name");
-        if (!forColor) {
+        const originalColor = input.getAttribute("name");
+        if (!originalColor) {
           return;
         }
 
+        // The color set in the pickr is only "staged" - it won't actually be saved and included with the form POST
+        // until the input's value is set to the color.
         const pickr = new Pickr({
           el: input,
           useAsButton: true,
-          default: forColor,
+          default: originalColor,
           theme: "classic",
           swatches: null,
           components: {
@@ -53,16 +55,20 @@ define([
               input: true,
               save: true,
               cancel: true,
+              clear: true,
             },
           },
         })
-          .on("init", (pickr) => {
-            input.value = pickr.getSelectedColor().toHEXA().toString(0);
-          })
           .on("save", (color) => {
-            const newColor = color.toHEXA().toString(0);
-            input.value = newColor;
+            if (color) {
+              const newColor = color.toHEXA().toString(0);
+              input.value = newColor;
+            }
             pickr.hide();
+          })
+          .on("clear", () => {
+            pickr.setColor(originalColor);
+            input.value = "";
           })
           .on("cancel", (pickr) => {
             pickr.hide();
