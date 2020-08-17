@@ -65,13 +65,7 @@ class color_form extends \moodleform {
 
     public function definition() {
         global $PAGE;
-        $PAGE->requires->js(new \moodle_url('https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.es5.min.js'), true);
-        // $jsmodule = array(
-        //     'name'     => 'tool_genmobilecss',
-        //     'fullpath' => '/admin/tool/genmobilecss/module.js',
-        //     'requires' => array()
-        // );
-        // $PAGE->requires->js_init_call('M.tool_genmobilecss.helper.init', array(), false, $jsmodule);
+        $PAGE->requires->js_call_amd('tool_genmobilecss/colorpicker', 'init');
         
         $mform = $this->_form;
         $mform->addElement('static', 'intro', '', get_string('colorformdesc', 'tool_genmobilecss'));

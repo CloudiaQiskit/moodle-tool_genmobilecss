@@ -46,6 +46,7 @@ if ($step == 1) {
     echo $OUTPUT->heading($pagetitle);
     intro_step();
 } else if ($step == 2) {
+    $PAGE->requires->css(new \moodle_url('https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css'));
     echo $OUTPUT->header();
     echo $OUTPUT->heading($pagetitle);
     choose_custom_colors_step();
@@ -78,8 +79,7 @@ function generate_custom_css_step() {
     $formdata = (new \tool_genmobilecss\color_form())->get_data();
     $colorstoreplace = array();
     foreach(get_object_vars($formdata) as $oldcolor => $newcolor) {
-        if (preg_match('/^#[\da-f]{6}$/i', $newcolor) ||
-                preg_match('/^#[\da-f]{3}$/i', $newcolor)) {
+        if (preg_match('/^#[\da-f]{3,8}$/i', $newcolor)) {
             $colorstoreplace[$oldcolor] = $newcolor;
         }
     }
