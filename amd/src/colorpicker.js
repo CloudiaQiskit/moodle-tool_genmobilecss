@@ -27,34 +27,47 @@ define([
 ], function ($, Pickr) {
   return {
     init: function () {
-      const inputElement = document.querySelector("#id_fff");
-      const pickr = new Pickr({
-        el: inputElement,
-        useAsButton: true,
-        default: "#42445A",
-        theme: "classic",
-        swatches: null,
-        components: {
-          preview: true,
-          opacity: true,
-          hue: true,
-          interaction: {
-            hex: true,
-            rgba: false,
-            hsva: false,
-            input: true,
-            save: true,
+      const inputElements = document.querySelectorAll(
+        ".colorpicker-text input"
+      );
+      inputElements.forEach((input) => {
+        const forColor = input.getAttribute("name");
+        if (!forColor) {
+          return;
+        }
+
+        const pickr = new Pickr({
+          el: input,
+          useAsButton: true,
+          default: forColor,
+          theme: "classic",
+          swatches: null,
+          components: {
+            preview: true,
+            opacity: true,
+            hue: true,
+            interaction: {
+              hex: true,
+              rgba: false,
+              hsva: false,
+              input: true,
+              save: true,
+              cancel: true,
+            },
           },
-        },
-      })
-        .on("init", (pickr) => {
-          inputElement.value = pickr.getSelectedColor().toHEXA().toString(0);
         })
-        .on("save", (color) => {
-          const newColor = color.toHEXA().toString(0);
-          inputElement.value = newColor;
-          pickr.hide();
-        });
+          .on("init", (pickr) => {
+            input.value = pickr.getSelectedColor().toHEXA().toString(0);
+          })
+          .on("save", (color) => {
+            const newColor = color.toHEXA().toString(0);
+            input.value = newColor;
+            pickr.hide();
+          })
+          .on("cancel", (pickr) => {
+            pickr.hide();
+          });
+      });
     },
   };
 });
