@@ -72,17 +72,28 @@ class color_form extends \moodleform {
         foreach($this->colors as $colorname => $colorinfo) {
             $mform->addElement('text', $colorname, $colorname, array('class'=>'colorpicker-text'));
             $mform->setType($colorname, PARAM_TEXT);
-            $infogroup = array();
-            $infogroup[] =& $mform->createElement('html',
-                    '<div style="background-color: ' . $colorname . '; ' .
-                    'width: 30px; height: 30px; margin-right: 10px; margin-bottom: 10px; outline: solid"></div>');
-            $infogroup[] =& $mform->createElement('static', 'description-' . $colorname, '',
+            $mform->addElement('static', 'description-' . $colorname, '',
                     $colorinfo->usedcount . " " . get_string('uses', 'tool_genmobilecss'));
-            $mform->addGroup($infogroup, 'info-' . $colorname, '', '', false);
+
+            $previewgroup = array();
+            $previewgroup[] =& $mform->createElement('html', $this->get_color_preview_div($colorname, False));
+            $previewgroup[] =& $mform->createElement('html', '<div id="convert-message-' . substr($colorname, 1) . '" ' .
+                'style="height: 30px; 10px; margin-right: 10px; margin-bottom: 35px; display: none;">' .
+                get_string('willbeconvertedto', 'tool_genmobilecss') . '</div>');
+            $previewgroup[] =& $mform->createElement('html', $this->get_color_preview_div($colorname, True));
+            $mform->addGroup($previewgroup, 'preview-' . $colorname, '', '', false);
         }
         $mform->addElement('hidden', 'step', '3');
         $mform->setType('step', PARAM_INT);
         $this->add_action_buttons(false, get_string('colorformsubmit', 'tool_genmobilecss'));
+    }
+
+    private function get_color_preview_div(string $color, bool $is_new_color_preview) {
+        $id = $is_new_color_preview ? 'id="new-color-preview-' . substr($color, 1) . '"' : '';
+        $hidden = $is_new_color_preview ? 'display: none;' : '';
+        return '<div ' . $id . ' style="background-color: ' . $color . '; ' .
+            'width: 30px; height: 30px; margin-right: 10px; margin-bottom: 35px; outline: solid; ' . $hidden .
+            '"></div>';
     }
 }
 
