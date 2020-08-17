@@ -78,8 +78,8 @@ function generate_custom_css_step() {
     $formdata = (new \tool_genmobilecss\color_form())->get_data();
     $colorstoreplace = array();
     foreach(get_object_vars($formdata) as $oldcolor => $newcolor) {
-        if (preg_match('/^#\d{6}$/', $newcolor) ||
-                preg_match('/^#\d{3}$/', $newcolor)) {
+        if (preg_match('/^#[\da-f]{6}$/i', $newcolor) ||
+                preg_match('/^#[\da-f]{3}$/i', $newcolor)) {
             $colorstoreplace[$oldcolor] = $newcolor;
         }
     }
