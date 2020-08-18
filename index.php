@@ -67,8 +67,8 @@ function intro_step() {
 }
 
 function choose_custom_colors_step() {
-    //$response = file_get_contents('https://mobileapp.moodledemo.net/build/main.css');
-    $response = '.heemin { background-color: #fff; } .bewy { color: #222; }';
+    $response = file_get_contents('https://mobileapp.moodledemo.net/build/main.css');
+    // $response = '.heemin { background-color: #fff; } .bewy { color: #222; }';
     $cache = cache::make('tool_genmobilecss', 'mobilecss');
     $cache->set('mobilecss', $response);
     $colorform = new \tool_genmobilecss\color_form($response);

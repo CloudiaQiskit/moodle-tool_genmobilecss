@@ -68,6 +68,7 @@ class color_form extends \moodleform {
         $PAGE->requires->js_call_amd('tool_genmobilecss/colorpicker', 'init');
         
         $mform = $this->_form;
+        $this->add_action_buttons(false, get_string('colorformsubmit', 'tool_genmobilecss'));
         $mform->addElement('static', 'intro', '', get_string('colorformdesc', 'tool_genmobilecss'));
 
         $mform->addElement('textarea', 'customcss', get_string('customcsslabel', 'tool_genmobilecss'),
