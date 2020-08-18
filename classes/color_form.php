@@ -69,6 +69,8 @@ class color_form extends \moodleform {
         
         $mform = $this->_form;
         $mform->addElement('static', 'intro', '', get_string('colorformdesc', 'tool_genmobilecss'));
+        $mform->addElement('textarea', 'customcss', get_string('customcsslabel', 'tool_genmobilecss'),
+            array('rows'=>'6', 'cols'=>'50', 'style'=>'font-family: monospace;'));
         foreach($this->colors as $colorname => $colorinfo) {
             $mform->addElement('text', $colorname, $colorname, array('class'=>'colorpicker-text'));
             $mform->setType($colorname, PARAM_TEXT);

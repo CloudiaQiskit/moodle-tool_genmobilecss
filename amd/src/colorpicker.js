@@ -27,63 +27,91 @@ define([
 ], function ($, Pickr) {
   return {
     init: function () {
-      const inputElements = document.querySelectorAll(
-        ".colorpicker-text input"
-      );
-      inputElements.forEach((input) => {
-        const originalColor = input.getAttribute("name");
-        if (!originalColor) {
-          return;
-        }
-        // Substring necessary to remove a hash from a hex color
-        const convertMessageId = `#convert-message-${originalColor.substring(
-          1
-        )}`;
-        const newColorPreviewId = `#new-color-preview-${originalColor.substring(
-          1
-        )}`;
+      const setupColorPickers = () => {
+        const inputElements = document.querySelectorAll(
+          ".colorpicker-text input"
+        );
+        inputElements.forEach((input) => {
+          const originalColor = input.getAttribute("name");
+          if (!originalColor) {
+            return;
+          }
+          // Substring necessary to remove a hash from a hex color
+          const convertMessageId = `#convert-message-${originalColor.substring(
+            1
+          )}`;
+          const newColorPreviewId = `#new-color-preview-${originalColor.substring(
+            1
+          )}`;
 
-        // The color set in the pickr is only "staged" - it won't actually be saved and included with the form POST
-        // until the input's value is set to the color.
-        const pickr = new Pickr({
-          el: input,
-          useAsButton: true,
-          default: originalColor,
-          theme: "classic",
-          swatches: null,
-          components: {
-            preview: true,
-            opacity: true,
-            hue: true,
-            interaction: {
-              input: true,
-              save: true,
-              cancel: true,
-              clear: true,
+          // The color set in the pickr is only "staged" - it won't actually be saved and included with the form POST
+          // until the input's value is set to the color.
+          const pickr = new Pickr({
+            el: input,
+            useAsButton: true,
+            default: originalColor,
+            theme: "classic",
+            swatches: null,
+            components: {
+              preview: true,
+              opacity: true,
+              hue: true,
+              interaction: {
+                input: true,
+                save: true,
+                cancel: true,
+                clear: true,
+              },
             },
-          },
-        })
-          .on("save", (color) => {
-            if (color) {
-              const newColor = color.toHEXA().toString(0);
-              input.value = newColor;
-              $(convertMessageId).show();
-              const newColorPreview = $(newColorPreviewId);
-              newColorPreview.css("background-color", newColor);
-              newColorPreview.show();
-            }
-            pickr.hide();
           })
-          .on("clear", () => {
-            pickr.setColor(originalColor);
-            input.value = "";
-            $(convertMessageId).hide();
-            $(newColorPreviewId).hide();
-          })
-          .on("cancel", (pickr) => {
-            pickr.hide();
-          });
-      });
+            .on("save", (color) => {
+              if (color) {
+                const newColor = color.toHEXA().toString(0);
+                input.value = newColor;
+                $(convertMessageId).show();
+                const newColorPreview = $(newColorPreviewId);
+                newColorPreview.css("background-color", newColor);
+                newColorPreview.show();
+              }
+              pickr.hide();
+            })
+            .on("clear", () => {
+              pickr.setColor(originalColor);
+              input.value = "";
+              $(convertMessageId).hide();
+              $(newColorPreviewId).hide();
+            })
+            .on("cancel", (pickr) => {
+              pickr.hide();
+            });
+        });
+      };
+
+      const setupTabInCustomCSSTextarea = () => {
+        // from https://stackoverflow.com/a/6637396/4954731
+        $(document).delegate("#id_customcss", "keydown", function (e) {
+          var keyCode = e.keyCode || e.which;
+
+          if (keyCode == 9) {
+            e.preventDefault();
+            var start = this.selectionStart;
+            var end = this.selectionEnd;
+
+            // set textarea value to: text before caret + tab + text after caret
+            $(this).val(
+              $(this).val().substring(0, start) +
+                "    " +
+                $(this).val().substring(end)
+            );
+
+            // put caret at right position again
+            this.selectionStart = this.selectionEnd = start + 4;
+          }
+        });
+      };
+
+      setupColorPickers();
+      setupTabInCustomCSSTextarea();
     },
   };
 });
