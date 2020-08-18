@@ -40,15 +40,24 @@ class css_file_manager {
                 'filename' => 'custom_mobile.css');
     }
 
-    public function get_file_info() {
-        return $this->fileinfo;
-    }
-
     public function get_file() {
         $fileinfo = $this->fileinfo;
         $fs = \get_file_storage();
         return $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+    }
+
+    public function get_file_contents() {
+        $file = $this->get_file();
+        if ($file) {
+            return $file->get_content();
+        } else {
+            return '';
+        }
+    }
+
+    public function get_file_info() {
+        return $this->fileinfo;
     }
 
     public function get_file_url() {

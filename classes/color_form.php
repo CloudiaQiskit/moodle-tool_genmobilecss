@@ -69,8 +69,12 @@ class color_form extends \moodleform {
         
         $mform = $this->_form;
         $mform->addElement('static', 'intro', '', get_string('colorformdesc', 'tool_genmobilecss'));
+
         $mform->addElement('textarea', 'customcss', get_string('customcsslabel', 'tool_genmobilecss'),
             array('rows'=>'6', 'cols'=>'50', 'style'=>'font-family: monospace;'));
+        $existingcustomcss = $this->get_existing_custom_css();
+        $mform->setDefault('customcss', $existingcustomcss);
+
         foreach($this->colors as $colorname => $colorinfo) {
             $mform->addElement('text', $colorname, $colorname, array('class'=>'colorpicker-text'));
             $mform->setType($colorname, PARAM_TEXT);
@@ -85,9 +89,21 @@ class color_form extends \moodleform {
             $previewgroup[] =& $mform->createElement('html', $this->get_color_preview_div($colorname, True));
             $mform->addGroup($previewgroup, 'preview-' . $colorname, '', '', false);
         }
+
         $mform->addElement('hidden', 'step', '3');
         $mform->setType('step', PARAM_INT);
         $this->add_action_buttons(false, get_string('colorformsubmit', 'tool_genmobilecss'));
+    }
+
+    private function get_existing_custom_css() {
+        $css_file_manager = new css_file_manager();
+        $css = $css_file_manager->get_file_contents();
+        if (empty($css)) {
+            return '';
+        }
+        $with_beginning_trimmed = explode('\* START ADDLCSS *\\', $css)[1];
+        $with_end_trimmed = explode("\n\* END ADDLCSS *\\", $with_beginning_trimmed)[0];
+        return $with_end_trimmed;
     }
 
     private function get_color_preview_div(string $color, bool $is_new_color_preview) {
