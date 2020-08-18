@@ -83,7 +83,11 @@ function generate_custom_css_step() {
             $colorstoreplace[$oldcolor] = $newcolor;
         }
     }
-    $conclusionform = new \tool_genmobilecss\conclusion_form($colorstoreplace);
+    $addlcss = '';
+    if (property_exists($formdata, 'customcss')) {
+        $addlcss = $formdata->customcss;
+    }
+    $conclusionform = new \tool_genmobilecss\conclusion_form($colorstoreplace, $addlcss);
     $conclusionform->display();
 }
 

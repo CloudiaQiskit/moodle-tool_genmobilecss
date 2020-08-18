@@ -40,9 +40,10 @@ require_once($CFG->libdir.'/formslib.php');
 class conclusion_form extends \moodleform {
     private $cssurl = '';
 
-    public function __construct(array $colorstoreplace = null) {
+    public function __construct(array $colorstoreplace = null, string $addlcss = '') {
         if (!is_null($colorstoreplace)) {
-            $newcss = $this->generate_css($colorstoreplace);
+            $coloroverridecss = $this->generate_color_overrides($colorstoreplace);
+            $newcss = $this->add_addl_css($coloroverridecss, $addlcss);
             $this->cssurl = $this->write_css_file($newcss);
         }
 
@@ -58,7 +59,7 @@ class conclusion_form extends \moodleform {
         $this->add_action_buttons(false, get_string('gotosettings', 'tool_genmobilecss'));
     }
 
-    private function generate_css(array $colorstoreplace) {
+    private function generate_color_overrides(array $colorstoreplace) {
         $cache = \cache::make('tool_genmobilecss', 'mobilecss');
         $oldcss = $cache->get('mobilecss');
         $cssparser = new Parser($oldcss);
@@ -93,6 +94,18 @@ class conclusion_form extends \moodleform {
             }
         }
         return $newcss->render();
+    }
+
+    private function add_addl_css(string $coloroverridecss, string $addlcss) {
+        return
+            "\* This is an automatically generated file. DO NOT EDIT *\\\n" .
+            "\n" .
+            "\* START ADDLCSS *\\\n" .
+            $addlcss .
+            "\n" .
+            "\* END ADDLCSS *\\\n" .
+            "\n" .
+            $coloroverridecss;
     }
 
     private function write_css_file(string $css) {
