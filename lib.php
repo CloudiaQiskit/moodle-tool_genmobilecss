@@ -36,8 +36,7 @@
  */
 function tool_genmobilecss_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     // No access restrictions - anyone can access the custom mobile CSS file, whether they're logged in or not
-    $systemcontext = context_system::instance();
-    $fs = get_file_storage();
-    $file = $fs->get_file($systemcontext->id, 'tool_genmobilecss', 'newcss', 0, '/', 'custom_mobile.css');
+    $css_file_manager = new \tool_genmobilecss\css_file_manager();
+    $file = $css_file_manager->get_file();
     send_stored_file($file, 86400, 0, false, array());
 }

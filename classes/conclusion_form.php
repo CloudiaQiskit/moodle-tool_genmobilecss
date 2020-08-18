@@ -111,25 +111,17 @@ class conclusion_form extends \moodleform {
     private function write_css_file(string $css) {
         global $CFG;
 
-        $context = \context_system::instance();
-        $fs = \get_file_storage();
-        $fileinfo = array(
-                'contextid' => $context->id,
-                'component' => 'tool_genmobilecss',
-                'filearea' => 'newcss',
-                'itemid' => 0,
-                'filepath' => '/',
-                'filename' => 'custom_mobile.css');
-        $file = $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
-                $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
+        $css_file_manager = new css_file_manager();
+        $file = $css_file_manager->get_file();
         if ($file) {
             $file->delete();
         }
+
+        $fileinfo = $css_file_manager->get_file_info();
+        $fs = \get_file_storage();
         $fs->create_file_from_string($fileinfo, $css);
 
-        $fileurl = \moodle_url::make_pluginfile_url(
-                $fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
-                $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename'], false);
+        $fileurl = $css_file_manager->get_file_url();
 
         $currentcsslastchar = substr($CFG->mobilecssurl, -1);
         if (strcmp($currentcsslastchar, '0') == 0) {
