@@ -22,13 +22,11 @@
  */
 
 const setupColorPicker = ($, Pickr, input) => {
-  const originalColor = input.getAttribute("name");
-  if (!originalColor) {
-    return;
-  }
-  // Substring necessary to remove a hash from a hex color
-  const convertMessageId = `#convert-message-${originalColor.substring(1)}`;
-  const newColorPreviewId = `#new-color-preview-${originalColor.substring(1)}`;
+  const colorId = input.getAttribute("name");
+  const originalColor = input.getAttribute("data-color");
+
+  const convertMessageId = `#convert-message-${colorId}`;
+  const newColorPreviewId = `#new-color-preview-${colorId}`;
 
   // The color set in the pickr is only "staged" - it won't actually be saved and included with the form POST
   // until the input's value is set to the color.

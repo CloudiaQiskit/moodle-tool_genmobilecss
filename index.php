@@ -68,7 +68,7 @@ function intro_step() {
 
 function choose_custom_colors_step() {
     $response = file_get_contents('https://mobileapp.moodledemo.net/build/main.css');
-    // $response = '.heemin { background-color: #fff; } .bewy { color: #222; }';
+    // $response = '.heemin { background-color: rgba(255,255,255,.5); } .bewy { color: #222; }';
     $cache = cache::make('tool_genmobilecss', 'mobilecss');
     $cache->set('mobilecss', $response);
     $colorform = new \tool_genmobilecss\color_form($response);
@@ -77,9 +77,12 @@ function choose_custom_colors_step() {
 
 function generate_custom_css_step() {
     $formdata = (new \tool_genmobilecss\color_form())->get_data();
+    $cache = cache::make('tool_genmobilecss', 'colors');
+    $colorinfo = $cache->get('colors');
     $colorstoreplace = array();
-    foreach(get_object_vars($formdata) as $oldcolor => $newcolor) {
+    foreach(get_object_vars($formdata) as $colorid => $newcolor) {
         if (preg_match('/^#[\da-f]{3,8}$/i', $newcolor)) {
+            $oldcolor = $colorinfo[$colorid]->color;
             $colorstoreplace[$oldcolor] = $newcolor;
         }
     }

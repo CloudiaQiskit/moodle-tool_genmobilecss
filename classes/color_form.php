@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 require_once($CFG->libdir.'/formslib.php');
 
 class color_form extends \moodleform {
+    // numeric id => colorinfo
     private $colors = array();
 
     public function __construct(string $css = null) {
@@ -40,6 +41,8 @@ class color_form extends \moodleform {
         if(is_null($css)) {
             $this->colors = $cache->get('colors');
         } else {
+            // original color => colorinfo
+            $colorsbycolor = array();
             $cssparser = new Parser($css);
             $cssdoc = $cssparser->parse();
             foreach($cssdoc->getAllRuleSets() as $ruleset) {
@@ -47,17 +50,21 @@ class color_form extends \moodleform {
                     $value = $rule->getValue();
                     if($value instanceof Color) {
                         $color = (string) $value;
-                        if (!array_key_exists($color, $this->colors)) {
-                            $this->colors[$color] = new color_info();
+                        if (!array_key_exists($color, $colorsbycolor)) {
+                            $colorsbycolor[$color] = new color_info();
+                            $colorsbycolor[$color]->color = $color;
                         }
-                        $this->colors[$color]->usedcount++;
+                        $colorsbycolor[$color]->usedcount++;
                     }
                 }
             }
-            uasort($this->colors, function($a, $b)
+            uasort($colorsbycolor, function($a, $b)
             {
                 return $b->usedcount - $a->usedcount;
             });
+            foreach($colorsbycolor as $colorinfo) {
+                $this->colors[] = $colorinfo;
+            }
             $cache->set('colors', $this->colors);
         }
         parent::__construct();
@@ -76,19 +83,22 @@ class color_form extends \moodleform {
         $existingcustomcss = $this->get_existing_custom_css();
         $mform->setDefault('customcss', $existingcustomcss);
 
-        foreach($this->colors as $colorname => $colorinfo) {
-            $mform->addElement('text', $colorname, $colorname, array('class'=>'colorpicker-text'));
-            $mform->setType($colorname, PARAM_TEXT);
-            $mform->addElement('static', 'description-' . $colorname, '',
+        foreach($this->colors as $colorid => $colorinfo) {
+            $mform->addElement('text', $colorid, $colorinfo->color,
+                array('class'=>'colorpicker-text', 'data-color'=>$colorinfo->color));
+            $mform->setType($colorid, PARAM_TEXT);
+            $mform->addElement('static', 'description-' . $colorid, '',
                     $colorinfo->usedcount . " " . get_string('uses', 'tool_genmobilecss'));
 
             $previewgroup = array();
-            $previewgroup[] =& $mform->createElement('html', $this->get_color_preview_div($colorname, False));
-            $previewgroup[] =& $mform->createElement('html', '<div id="convert-message-' . substr($colorname, 1) . '" ' .
+            $previewgroup[] =& $mform->createElement('html',
+                $this->get_color_preview_div($colorid, $colorinfo->color, False));
+            $previewgroup[] =& $mform->createElement('html', '<div id="convert-message-' . $colorid . '" ' .
                 'style="height: 30px; 10px; margin-right: 10px; margin-bottom: 35px; display: none;">' .
                 get_string('willbeconvertedto', 'tool_genmobilecss') . '</div>');
-            $previewgroup[] =& $mform->createElement('html', $this->get_color_preview_div($colorname, True));
-            $mform->addGroup($previewgroup, 'preview-' . $colorname, '', '', false);
+            $previewgroup[] =& $mform->createElement('html',
+                $this->get_color_preview_div($colorid, $colorinfo->color, True));
+            $mform->addGroup($previewgroup, 'preview-' . $colorid, '', '', false);
         }
 
         $mform->addElement('hidden', 'step', '3');
@@ -107,8 +117,8 @@ class color_form extends \moodleform {
         return $with_end_trimmed;
     }
 
-    private function get_color_preview_div(string $color, bool $is_new_color_preview) {
-        $id = $is_new_color_preview ? 'id="new-color-preview-' . substr($color, 1) . '"' : '';
+    private function get_color_preview_div(int $colorid, string $color, bool $is_new_color_preview) {
+        $id = $is_new_color_preview ? 'id="new-color-preview-' . $colorid . '"' : '';
         $hidden = $is_new_color_preview ? 'display: none;' : '';
         return '<div ' . $id . ' style="background-color: ' . $color . '; ' .
             'width: 30px; height: 30px; margin-right: 10px; margin-bottom: 35px; outline: solid; ' . $hidden .
@@ -117,5 +127,6 @@ class color_form extends \moodleform {
 }
 
 class color_info {
+    public $color = '';
     public $usedcount = 0;
 }
