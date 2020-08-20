@@ -32,8 +32,11 @@ require_once($CFG->libdir.'/formslib.php');
 class intro_form extends \moodleform {
     public function definition() {
         $mform = $this->_form;
-        $mform->addElement('static', 'intro', get_string('introtextlabel', 'tool_genmobilecss'),
-                get_string('introtext', 'tool_genmobilecss'));
+        $mform->addElement('static', 'intro', '', get_string('introtext', 'tool_genmobilecss'));
+        $mform->addElement('static', 'intro', '', get_string('introstep1', 'tool_genmobilecss'));
+        $mform->addElement('static', 'intro', '', get_string('introstep2', 'tool_genmobilecss'));
+        $mform->addElement('static', 'intro', '', get_string('introstep3', 'tool_genmobilecss'));
+        $mform->addElement('static', 'intro', '', get_string('introcalltoaction', 'tool_genmobilecss'));
         $mform->addElement('hidden', 'step', '2');
         $mform->setType('step', PARAM_INT);
         $this->add_action_buttons(false, get_string('downloadmobilecss', 'tool_genmobilecss'));

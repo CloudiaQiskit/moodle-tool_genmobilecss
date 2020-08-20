@@ -75,8 +75,9 @@ class color_form extends \moodleform {
         $PAGE->requires->js_call_amd('tool_genmobilecss/colorpicker', 'init');
         
         $mform = $this->_form;
-        $this->add_action_buttons(false, get_string('colorformsubmit', 'tool_genmobilecss'));
         $mform->addElement('static', 'intro', '', get_string('colorformdesc', 'tool_genmobilecss'));
+        $mform->addElement('static', 'intro', '', get_string('colorformcalltoaction', 'tool_genmobilecss'));
+        $this->add_action_buttons(false, get_string('colorformsubmit', 'tool_genmobilecss'));
 
         $mform->addElement('textarea', 'customcss', get_string('customcsslabel', 'tool_genmobilecss'),
             array('rows'=>'6', 'cols'=>'50', 'style'=>'font-family: monospace;'));
@@ -84,8 +85,8 @@ class color_form extends \moodleform {
         $mform->setDefault('customcss', $existingcustomcss);
 
         foreach($this->colors as $colorid => $colorinfo) {
-            $mform->addElement('text', $colorid, $colorinfo->color,
-                array('class'=>'colorpicker-text', 'data-color'=>$colorinfo->color));
+            $mform->addElement('text', $colorid, get_string('replacementcolor', 'tool_genmobilecss') .
+                $colorinfo->color, array('class'=>'colorpicker-text', 'data-color'=>$colorinfo->color));
             $mform->setType($colorid, PARAM_TEXT);
             $mform->addElement('static', 'description-' . $colorid, '',
                     $colorinfo->usedcount . " " . get_string('uses', 'tool_genmobilecss'));
