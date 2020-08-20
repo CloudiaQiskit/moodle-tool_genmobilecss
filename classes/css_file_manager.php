@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TODO: comment
+ * Class for handling the custom mobile CSS file managed by this plugin and stored in Moodle's filesystem.
  *
  * @package    tool_genmobilecss
  * @copyright  2020 Alison of Sheesania
@@ -30,14 +30,15 @@ class css_file_manager {
     private $fileinfo;
 
     public function __construct() {
-        $context = \context_system::instance();
+        $systemcontext = \context_system::instance();
+        // There will only ever be one custom_mobile.css, so most of these values are hard-coded and arbitrary.
         $this->fileinfo = array(
-                'contextid' => $context->id,
-                'component' => 'tool_genmobilecss',
-                'filearea' => 'newcss',
-                'itemid' => 0,
-                'filepath' => '/',
-                'filename' => 'custom_mobile.css');
+                'contextid' => $systemcontext->id, // has to be the system context so it can be accessed anywhere
+                'component' => 'tool_genmobilecss', // has to be managed by this plugin
+                'filearea' => 'newcss', // arbitrary
+                'itemid' => 0, // arbitrary
+                'filepath' => '/', // arbitrary
+                'filename' => 'custom_mobile.css'); // arbitrary
     }
 
     public function get_file() {

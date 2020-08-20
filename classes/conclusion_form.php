@@ -15,7 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TODO: comment
+ * Form that generates custom CSS, stores it in a file, and instructs the user how to set it as their custom mobile
+ * CSS file
  *
  * @package    tool_genmobilecss
  * @copyright  2020 Alison of Sheesania
@@ -41,9 +42,13 @@ class conclusion_form extends \moodleform {
     private $cssurl = '';
 
     public function __construct(array $colorstoreplace = null, string $addlcss = '') {
+        // If $colorstoreplace is null, we're hitting this from a postback and don't need to worry about it
         if (!is_null($colorstoreplace)) {
+            // Build the part of the generated CSS that overrides default colors with what the user picked
             $coloroverridecss = $this->generate_color_overrides($colorstoreplace);
+            // Add in any extra custom CSS the user put in the form
             $newcss = $this->add_addl_css($coloroverridecss, $addlcss);
+            // Write this CSS to a file and get the URL
             $this->cssurl = $this->write_css_file($newcss);
         }
 
@@ -51,6 +56,8 @@ class conclusion_form extends \moodleform {
     }
 
     public function definition() {
+        // The form just displays the URL to the generated CSS, some instructions, and a button for going to the admin
+        // page where they can set custom mobile CSS
         $mform = $this->_form;
         $mform->addElement('static', 'url', get_string('urldesc', 'tool_genmobilecss'), $this->cssurl);
         $mform->addElement('static', 'instructions', '', get_string('urlinstructions', 'tool_genmobilecss'));
@@ -60,6 +67,7 @@ class conclusion_form extends \moodleform {
     }
 
     private function generate_color_overrides(array $colorstoreplace) {
+        // grab the default CSS from the cache
         $cache = \cache::make('tool_genmobilecss', 'mobilecss');
         $oldcss = $cache->get('mobilecss');
         $cssparser = new Parser($oldcss);
@@ -70,8 +78,11 @@ class conclusion_form extends \moodleform {
         foreach($cssdoc->getAllRuleSets() as $ruleset) {
             foreach($ruleset->getRules() as $rule) {
                 $value = $rule->getValue();
+                // If this CSS rule involves a color...
                 if($value instanceof Color) {
                     $color = (string) $value;
+                    // Check if this was one of the colors the user wanted to replace. If so, build a new rule with the
+                    // same selectors and rule, but using the alternate color instead. Then add it to our custom CSS.
                     if (array_key_exists($color, $colorstoreplace)) {
                         $newcolor = Color::parse(new ParserState($colorstoreplace[$color], Settings::create()));
 
@@ -85,7 +96,7 @@ class conclusion_form extends \moodleform {
 
                         $newrule = new Rule($rule->getRule());
                         $newrule->addValue($newcolor);
-                        $newrule->setIsImportant(true);
+                        $newrule->setIsImportant(true); // to ensure the default color will get overridden
 
                         $newruleset->addRule($newrule);
                         $newcss->append($newruleset);
@@ -93,6 +104,7 @@ class conclusion_form extends \moodleform {
                 }
             }
         }
+        // Render the CSS we've built to a string
         return $newcss->render();
     }
 
@@ -123,6 +135,9 @@ class conclusion_form extends \moodleform {
 
         $fileurl = $css_file_manager->get_file_url();
 
+        // Moodle Mobile only reloads the custom CSS file if the URL has changed. To ensure the URL changes, we can add
+        // a meaningless anchor to the end of the new URL with a value different from the current custom CSS URL setting
+        // (see https://docs.moodle.org/dev/Moodle_Mobile_Themes#Updating_your_theme_in_the_app).
         $currentcsslastchar = substr($CFG->mobilecssurl, -1);
         if (strcmp($currentcsslastchar, '0') == 0) {
             return $fileurl . '#1';

@@ -15,9 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Links and settings
- *
- * This file contains links and settings used by tool_genmobilecss
+ * Links and settings used by tool_genmobilecss
  *
  * @package    tool_genmobilecss
  * @copyright  2020 Alison of Sheesania
@@ -25,6 +23,7 @@
  */
 defined('MOODLE_INTERNAL') || die;
 
+// Add "Generate custom CSS for Moodle Mobile" link to the admin "Appearance" section
 if ($hassiteconfig) {
     $ADMIN->add('appearance', new admin_externalpage(
                     'toolgenmobilecss',

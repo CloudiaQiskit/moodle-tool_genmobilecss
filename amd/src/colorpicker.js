@@ -14,28 +14,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TODO: comment
+ * JavaScript for the form for picking alternate colors to override the default mobile CSS
  *
  * @package    tool_genmobilecss
  * @copyright  2020 Alison of Sheesania
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// Sets up a color picker for a single text field input. Uses https://github.com/Simonwep/pickr for the color picker
 const setupColorPicker = ($, Pickr, input) => {
   const colorId = input.getAttribute("name");
   const originalColor = input.getAttribute("data-color");
 
+  // Ids for components for previewing a new color that's been selected. Will be hidden when there isn't a new color
+  // selected
   const convertMessageId = `#convert-message-${colorId}`;
   const newColorPreviewId = `#new-color-preview-${colorId}`;
 
   // The color set in the pickr is only "staged" - it won't actually be saved and included with the form POST
-  // until the input's value is set to the color.
+  // until the *input's* value is set to the color.
   const pickr = new Pickr({
     el: input,
-    useAsButton: true,
-    default: originalColor,
+    useAsButton: true, // necessary for using a form input as a pickr
+    default: originalColor, // default to showing the original color in the pickr
     theme: "classic",
-    swatches: null,
+    swatches: null, // don't show any color suggestions
     components: {
       preview: true,
       opacity: true,
@@ -50,8 +53,11 @@ const setupColorPicker = ($, Pickr, input) => {
   })
     .on("save", (color) => {
       if (color) {
+        // save the new color by setting it in the input
         const newColor = color.toHEXA().toString(0);
         input.value = newColor;
+
+        // preview the new color by unhiding the relevant components and telling them about the new color
         $(convertMessageId).show();
         const newColorPreview = $(newColorPreviewId);
         newColorPreview.css("background-color", newColor);
@@ -60,6 +66,7 @@ const setupColorPicker = ($, Pickr, input) => {
       pickr.hide();
     })
     .on("clear", () => {
+      // unset any new color and stop showing any previews of it
       pickr.setColor(originalColor);
       input.value = "";
       $(convertMessageId).hide();
@@ -70,11 +77,12 @@ const setupColorPicker = ($, Pickr, input) => {
     });
 };
 
+// Sets up color pickers for all the text fields for picking alternate colors
 const setupColorPickers = ($, Pickr) => {
   const inputElements = document.querySelectorAll(".colorpicker-text input");
 
   // Only load the color picker when the input first becomes visible. This prevents loading 100+ color pickers all at
-  // once when the page loads
+  // once when the page loads, making it freeze briefly
   let inputVisibleObserver = new IntersectionObserver((entries, self) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -89,6 +97,8 @@ const setupColorPickers = ($, Pickr) => {
   });
 };
 
+// Enable tabbing in the text area for entering custom CSS. By default, tab just brings you to the next form field.
+// This code makes tab insert four spaces in the text area instead, which is handy if you're entering indented CSS.
 const setupTabInCustomCSSTextarea = ($) => {
   // from https://stackoverflow.com/a/6637396/4954731
   $(document).delegate("#id_customcss", "keydown", function (e) {
@@ -112,6 +122,7 @@ const setupTabInCustomCSSTextarea = ($) => {
   });
 };
 
+// require.js sorcery demanded by Moodle
 define([
   "jquery",
   "https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js",

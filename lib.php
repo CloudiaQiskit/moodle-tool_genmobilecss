@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TODO: comment
+ * Interface between tool_genmobilecss and the Moodle core libraries
  *
  * @package    tool_genmobilecss
  * @copyright  2020 Alison of Sheesania
@@ -23,16 +23,10 @@
  */
 
 /**
- * Serve the files from the MYPLUGIN file areas
+ * Function for serving files from the tool_genmobilecss file area. Used to serve the custom CSS file, which is stored
+ * in the plugin's file area.
  *
- * @param stdClass $course the course object
- * @param stdClass $cm the course module object
- * @param stdClass $context the context
- * @param string $filearea the name of the file area
- * @param array $args extra arguments (itemid, path)
- * @param bool $forcedownload whether or not force download
- * @param array $options additional options affecting the file serving
- * @return bool false if the file not found, just send the file otherwise and do not return anything
+ * The parameters are required by Moodle, but are all ignored in favor of just serving the custom CSS file.
  */
 function tool_genmobilecss_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     // No access restrictions - anyone can access the custom mobile CSS file, whether they're logged in or not

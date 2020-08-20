@@ -32,8 +32,8 @@ $string['introstep3'] = "3. Generate a custom CSS file to override the default c
         "and set it as your Moodle Mobile CSS.";
 $string['introcalltoaction'] = "Ready to get started? This download may take a moment!";
 $string['downloadmobilecss'] = 'Download latest mobile CSS';
-$string['cachedef_mobilecss'] = 'The current main CSS file for the Moodle Mobile app';
-$string['cachedef_colors'] = 'Information about colors found in the main CSS file';
+$string['cachedef_mobilecss'] = 'The current default CSS file for the Moodle Mobile app';
+$string['cachedef_colors'] = 'Information about colors found in the default CSS file';
 $string['uses'] = 'uses';
 $string['colorformdesc'] = 'Choose alternate colors for any default colors you would like to replace. If you don\'t ' .
         'choose an alternate color, the default one will continue to be used. You can also add any other custom ' .

@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * An initial form with information about the plugin + a button to
- * start the CSS downloading + processing
+ * An initial form with information about the plugin + a button to start downloading the default CSS file
  *
  * @package    tool_genmobilecss
  * @copyright  2020 Alison of Sheesania
@@ -29,7 +28,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->libdir.'/formslib.php');
 
-class intro_form extends \moodleform {
+class download_form extends \moodleform {
     public function definition() {
         $mform = $this->_form;
         $mform->addElement('static', 'intro', '', get_string('introtext', 'tool_genmobilecss'));

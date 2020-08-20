@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TODO - comment
+ * Main page for the custom mobile CSS generation tool.
  *
  * @package    tool_genmobilecss
  * @copyright  2020 Alison of Sheesania
@@ -26,6 +26,7 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
+// Set up this page as a Moodle admin page
 admin_externalpage_setup('toolgenmobilecss');
 
 $pagetitle = get_string('pluginname', 'tool_genmobilecss');
@@ -39,13 +40,17 @@ $PAGE->set_title($pagetitle);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_heading($pagetitle);
 
+// "Step" is used to control what step of the CSS generation process we're currently on, and thus which form to show.
+// Each form has a hidden field with the next step's number, which will cause it to advance to the next step when it's
+// submitted.
 $step = optional_param('step', 1, PARAM_INT);
 
 if ($step == 1) {
     echo $OUTPUT->header();
     echo $OUTPUT->heading($pagetitle);
-    intro_step();
+    download_default_css_step();
 } else if ($step == 2) {
+    // CSS required for color pickers. Has to be queued up before header stuff is printed out
     $PAGE->requires->css(new \moodle_url('https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css'));
     echo $OUTPUT->header();
     echo $OUTPUT->heading($pagetitle);
@@ -61,14 +66,15 @@ if ($step == 1) {
 echo $OUTPUT->footer();
 die();
 
-function intro_step() {
-    $introform = new \tool_genmobilecss\intro_form();
-    $introform->display();
+function download_default_css_step() {
+    $downloadform = new \tool_genmobilecss\download_form();
+    $downloadform->display();
 }
 
 function choose_custom_colors_step() {
+    // Download the current Moodle Mobile CSS file
     $response = file_get_contents('https://mobileapp.moodledemo.net/build/main.css');
-    // $response = '.heemin { background-color: rgba(255,255,255,.5); } .bewy { color: #222; }';
+    // Cache it so it can also be used to generate the new CSS file in a later step
     $cache = cache::make('tool_genmobilecss', 'mobilecss');
     $cache->set('mobilecss', $response);
     $colorform = new \tool_genmobilecss\color_form($response);
@@ -76,25 +82,38 @@ function choose_custom_colors_step() {
 }
 
 function generate_custom_css_step() {
+    // Find what replacement colors the user picked on the previous form. The format is colorid => new color
     $formdata = (new \tool_genmobilecss\color_form())->get_data();
+    // Get cached information about colors in the default CSS file. Needed to look up what original color each colorid
+    // represents
     $cache = cache::make('tool_genmobilecss', 'colors');
     $colorinfo = $cache->get('colors');
     $colorstoreplace = array();
+
     foreach(get_object_vars($formdata) as $colorid => $newcolor) {
+        // If the form field is one with a hex color code - i.e. one of the replacement color fields and not one of the
+        // other form items...
         if (preg_match('/^#[\da-f]{3,8}$/i', $newcolor)) {
+            // Look up what original color this colorid represents, then map the old color to the new replacement color
+            // in $colorstoreplace
             $oldcolor = $colorinfo[$colorid]->color;
             $colorstoreplace[$oldcolor] = $newcolor;
         }
     }
+
+    // Also grab the form field for additional custom CSS
     $addlcss = '';
     if (property_exists($formdata, 'customcss')) {
         $addlcss = $formdata->customcss;
     }
+
+    // Okay, now we can actually start working on generating the new CSS file
     $conclusionform = new \tool_genmobilecss\conclusion_form($colorstoreplace, $addlcss);
     $conclusionform->display();
 }
 
 function redirect_step() {
+    // Redirect to the admin settings page where custom mobile CSS can be set
     $mobilesettingsurl = new moodle_url('/admin/settings.php', ['section' => 'mobileappearance']);
     redirect($mobilesettingsurl);
     die();
