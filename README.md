@@ -4,7 +4,9 @@ A Moodle plugin to help build custom CSS for Moodle Mobile and override the defa
 ## Screenshots
 *Choose new colors and add additional custom CSS*
 ![Screenshot 1](https://raw.githubusercontent.com/sheesania/moodle-tool_genmobilecss/master/screenshot_01.png)
+
+*The tool will automatically replace all instances of the original color with your new color*
 ![Screenshot 2](https://raw.githubusercontent.com/sheesania/moodle-tool_genmobilecss/master/screenshot_02.png)
 
-*The tool will then generate the mobile CSS file for you*
+*Once you're done, the plugin generates the mobile CSS file for you*
 ![Screenshot 3](https://raw.githubusercontent.com/sheesania/moodle-tool_genmobilecss/master/screenshot_03.png)
