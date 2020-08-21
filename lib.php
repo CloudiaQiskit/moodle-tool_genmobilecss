@@ -29,8 +29,8 @@
  * The parameters are required by Moodle, but are all ignored in favor of just serving the custom CSS file.
  */
 function tool_genmobilecss_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
-    // No access restrictions - anyone can access the custom mobile CSS file, whether they're logged in or not
-    $css_file_manager = new \tool_genmobilecss\css_file_manager();
-    $file = $css_file_manager->get_file();
+    // No access restrictions - anyone can access the custom mobile CSS file, whether they're logged in or not.
+    $cssfilemanager = new \tool_genmobilecss\css_file_manager();
+    $file = $cssfilemanager->get_file();
     send_stored_file($file, 86400, 0, false, array());
 }

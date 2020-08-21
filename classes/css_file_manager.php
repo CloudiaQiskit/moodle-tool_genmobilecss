@@ -33,12 +33,12 @@ class css_file_manager {
         $systemcontext = \context_system::instance();
         // There will only ever be one custom_mobile.css, so most of these values are hard-coded and arbitrary.
         $this->fileinfo = array(
-                'contextid' => $systemcontext->id, // has to be the system context so it can be accessed anywhere
-                'component' => 'tool_genmobilecss', // has to be managed by this plugin
-                'filearea' => 'newcss', // arbitrary
-                'itemid' => 0, // arbitrary
-                'filepath' => '/', // arbitrary
-                'filename' => 'custom_mobile.css'); // arbitrary
+                'contextid' => $systemcontext->id, // Has to be the system context so it can be accessed anywhere.
+                'component' => 'tool_genmobilecss', // Has to be managed by this plugin.
+                'filearea' => 'newcss', // Arbitrary.
+                'itemid' => 0, // Arbitrary.
+                'filepath' => '/', // Arbitrary.
+                'filename' => 'custom_mobile.css'); // Arbitrary.
     }
 
     public function get_file() {

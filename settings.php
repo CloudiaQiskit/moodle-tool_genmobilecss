@@ -23,7 +23,7 @@
  */
 defined('MOODLE_INTERNAL') || die;
 
-// Add "Generate custom CSS for Moodle Mobile" link to the admin "Appearance" section
+// Add "Generate custom CSS for Moodle Mobile" link to the admin "Appearance" section.
 if ($hassiteconfig) {
     $ADMIN->add('appearance', new admin_externalpage(
                     'toolgenmobilecss',

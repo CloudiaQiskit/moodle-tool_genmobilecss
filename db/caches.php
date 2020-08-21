@@ -24,11 +24,11 @@
  */
 defined('MOODLE_INTERNAL') || die;
 $definitions = [
-        // The current default CSS file for the Moodle Mobile app
+        // The current default CSS file for the Moodle Mobile app.
         'mobilecss' => [
                 'mode' => cache_store::MODE_APPLICATION
         ],
-        // Information about colors found in the default CSS file
+        // Information about colors found in the default CSS file.
         'colors' => [
                 'mode' => cache_store::MODE_APPLICATION
         ]
