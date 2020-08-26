@@ -24,14 +24,14 @@
 
 namespace tool_genmobilecss;
 
-use \Sabberworm\CSS\Parser;
-use \Sabberworm\CSS\Value\Color;
-use \Sabberworm\CSS\CSSList\Document;
-use \Sabberworm\CSS\RuleSet\DeclarationBlock;
-use \Sabberworm\CSS\RuleSet\AtRuleSet;
-use \Sabberworm\CSS\Rule\Rule;
-use \Sabberworm\CSS\Parsing\ParserState;
-use \Sabberworm\CSS\Settings;
+use Sabberworm\CSS\Parser;
+use Sabberworm\CSS\Value\Color;
+use Sabberworm\CSS\CSSList\Document;
+use Sabberworm\CSS\RuleSet\DeclarationBlock;
+use Sabberworm\CSS\RuleSet\AtRuleSet;
+use Sabberworm\CSS\Rule\Rule;
+use Sabberworm\CSS\Parsing\ParserState;
+use Sabberworm\CSS\Settings;
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
@@ -156,7 +156,7 @@ class conclusion_form extends \moodleform {
         }
 
         $fileinfo = $cssfilemanager->get_file_info();
-        $fs = \get_file_storage();
+        $fs = get_file_storage();
         $fs->create_file_from_string($fileinfo, $css);
 
         $fileurl = $cssfilemanager->get_file_url();

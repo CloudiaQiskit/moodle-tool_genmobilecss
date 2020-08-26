@@ -52,7 +52,7 @@ class css_file_manager {
      */
     public function get_file() {
         $fileinfo = $this->fileinfo;
-        $fs = \get_file_storage();
+        $fs = get_file_storage();
         return $fs->get_file($fileinfo['contextid'], $fileinfo['component'], $fileinfo['filearea'],
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
     }

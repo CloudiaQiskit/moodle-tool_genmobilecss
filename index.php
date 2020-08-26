@@ -51,7 +51,7 @@ if ($step == 1) {
     download_default_css_step();
 } else if ($step == 2) {
     // CSS required for color pickers. Has to be queued up before header stuff is printed out.
-    $PAGE->requires->css(new \moodle_url('https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css'));
+    $PAGE->requires->css(new moodle_url('https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css'));
     echo $OUTPUT->header();
     echo $OUTPUT->heading($pagetitle);
     choose_custom_colors_step();
