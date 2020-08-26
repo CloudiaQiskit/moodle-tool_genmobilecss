@@ -66,21 +66,30 @@ if ($step == 1) {
 echo $OUTPUT->footer();
 die();
 
+/**
+ * Display the intro form with a button for downloading the current default mobile CSS file.
+ */
 function download_default_css_step() {
     $downloadform = new \tool_genmobilecss\download_form();
     $downloadform->display();
 }
 
+/**
+ * Download the current default Moodle Mobile CSS file, cache it for later processing, and then display the form for
+ * choosing alternate colors.
+ */
 function choose_custom_colors_step() {
-    // Download the current Moodle Mobile CSS file.
     $response = file_get_contents('https://mobileapp.moodledemo.net/build/main.css');
-    // Cache it so it can also be used to generate the new CSS file in a later step.
     $cache = cache::make('tool_genmobilecss', 'mobilecss');
     $cache->set('mobilecss', $response);
     $colorform = new \tool_genmobilecss\color_form($response);
     $colorform->display();
 }
 
+/**
+ * Get the replacement colors + additional CSS the user picked on the preceding color form, and then display the
+ * form that generates new custom CSS and makes it available to the user.
+ */
 function generate_custom_css_step() {
     // Find what replacement colors the user picked on the previous form. The format is colorid => new color.
     $formdata = (new \tool_genmobilecss\color_form())->get_data();
@@ -112,8 +121,11 @@ function generate_custom_css_step() {
     $conclusionform->display();
 }
 
+/**
+ * Redirect to the admin settings page where custom mobile CSS can be set. Called after new custom CSS has been
+ * generated and the user clicks a button to go to the settings page.
+ */
 function redirect_step() {
-    // Redirect to the admin settings page where custom mobile CSS can be set.
     $mobilesettingsurl = new moodle_url('/admin/settings.php', ['section' => 'mobileappearance']);
     redirect($mobilesettingsurl);
     die();

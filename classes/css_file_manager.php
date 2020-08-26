@@ -27,8 +27,12 @@ namespace tool_genmobilecss;
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 class css_file_manager {
+    /** @var string Moodle file information for the custom CSS file managed by this plugin. */
     private $fileinfo;
 
+    /**
+     * Populate the information for the CSS file managed by this plugin.
+     */
     public function __construct() {
         $systemcontext = \context_system::instance();
         // There will only ever be one custom_mobile.css, so most of these values are hard-coded and arbitrary.
@@ -41,6 +45,11 @@ class css_file_manager {
                 'filename' => 'custom_mobile.css'); // Arbitrary.
     }
 
+    /**
+     * Get the Moodle file object for the custom CSS file managed by this plugin. Might be null.
+     *
+     * @return stdClass the Moodle file object
+     */
     public function get_file() {
         $fileinfo = $this->fileinfo;
         $fs = \get_file_storage();
@@ -48,6 +57,11 @@ class css_file_manager {
             $fileinfo['itemid'], $fileinfo['filepath'], $fileinfo['filename']);
     }
 
+    /**
+     * Get the contents of the custom CSS file managed by this plugin.
+     *
+     * @return string The contents of the file, or an empty string if the file doesn't exist.
+     */
     public function get_file_contents() {
         $file = $this->get_file();
         if ($file) {
@@ -57,10 +71,20 @@ class css_file_manager {
         }
     }
 
+    /**
+     * Get the Moodle file information for the custom CSS file managed by this plugin.
+     *
+     * @return array the Moodle file information
+     */
     public function get_file_info() {
         return $this->fileinfo;
     }
 
+    /**
+     * Get the URL to the custom CSS file managed by this plugin.
+     *
+     * @return string the URL
+     */
     public function get_file_url() {
         $fileinfo = $this->fileinfo;
         return \moodle_url::make_pluginfile_url(

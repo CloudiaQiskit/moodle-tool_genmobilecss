@@ -29,6 +29,10 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 require_once($CFG->libdir.'/formslib.php');
 
 class download_form extends \moodleform {
+
+    /**
+     * Display an intro the plugin and a button to start downloading the default CSS.
+     */
     public function definition() {
         $mform = $this->_form;
         $mform->addElement('static', 'intro', '', get_string('introtext', 'tool_genmobilecss'));

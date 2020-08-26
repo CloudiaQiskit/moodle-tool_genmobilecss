@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Form that generates custom CSS, stores it in a file, and instructs the user how to set it as their custom mobile
- * CSS file
+ * Form that generates custom CSS, stores it in a file, and tell the user how to set it as their custom mobile CSS.
  *
  * @package    tool_genmobilecss
  * @copyright  2020 Alison of Sheesania
@@ -31,33 +30,42 @@ use \Sabberworm\CSS\CSSList\Document;
 use \Sabberworm\CSS\RuleSet\DeclarationBlock;
 use \Sabberworm\CSS\RuleSet\AtRuleSet;
 use \Sabberworm\CSS\Rule\Rule;
-use Sabberworm\CSS\Parsing\ParserState;
-use Sabberworm\CSS\Settings;
+use \Sabberworm\CSS\Parsing\ParserState;
+use \Sabberworm\CSS\Settings;
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->libdir.'/formslib.php');
 
 class conclusion_form extends \moodleform {
+    /** @var string The URL to the generated custom CSS file */
     private $cssurl = '';
 
+    /**
+     *
+     * Executed when the form is first created to generate a custom CSS file with the color overrides + additional
+     * CSS the user picked out, then save the file and grab its URL. When the form is actually displayed, then the URL
+     * and additional instructions will be shown to the user.
+     *
+     * @param array $colorstoreplace Map of original colors => the colors to replace them with
+     * @param string $addlcss Any additional CSS the user wanted to include in the custom CSS file
+     */
     public function __construct(array $colorstoreplace = null, string $addlcss = '') {
         // If $colorstoreplace is null, we're hitting this from a postback and don't need to worry about it.
         if (!is_null($colorstoreplace)) {
-            // Build the part of the generated CSS that overrides default colors with what the user picked.
             $coloroverridecss = $this->generate_color_overrides($colorstoreplace);
-            // Add in any extra custom CSS the user put in the form.
             $newcss = $this->add_addl_css($coloroverridecss, $addlcss);
-            // Write this CSS to a file and get the URL.
             $this->cssurl = $this->write_css_file($newcss);
         }
 
         parent::__construct();
     }
 
+    /**
+     * Displays the URL to the generated CSS, some instructions, and a button for going to the admin page where the user
+     * can set the file for custom mobile CSS.
+     */
     public function definition() {
-        // The form just displays the URL to the generated CSS, some instructions, and a button for going to the admin
-        // ...page where they can set custom mobile CSS.
         $mform = $this->_form;
         $mform->addElement('static', 'url', get_string('urldesc', 'tool_genmobilecss'), $this->cssurl);
         $mform->addElement('static', 'instructions', '', get_string('urlinstructions', 'tool_genmobilecss'));
@@ -66,6 +74,12 @@ class conclusion_form extends \moodleform {
         $this->add_action_buttons(false, get_string('gotosettings', 'tool_genmobilecss'));
     }
 
+    /**
+     * Generate CSS rules to override the default colors with any alternate colors the user picked out.
+     *
+     * @param array $colorstoreplace Map of original colors => the colors to replace them with
+     * @return string String of the CSS color rules we've built
+     */
     private function generate_color_overrides(array $colorstoreplace) {
         // Grab the default CSS from the cache.
         $cache = \cache::make('tool_genmobilecss', 'mobilecss');
@@ -104,10 +118,16 @@ class conclusion_form extends \moodleform {
                 }
             }
         }
-        // Render the CSS we've built to a string.
         return $newcss->render();
     }
 
+    /**
+     * Append any additional custom CSS the user entered to the color override CSS.
+     *
+     * @param string $coloroverridecss The CSS overriding default colors with the new ones the user picked
+     * @param string $addlcss The additional custom CSS the user entered. Possibly an empty string
+     * @return string The CSS strings properly concatenated into a full CSS file
+     */
     private function add_addl_css(string $coloroverridecss, string $addlcss) {
         return
             "\* This is an automatically generated file. DO NOT EDIT *\\\n" .
@@ -120,6 +140,12 @@ class conclusion_form extends \moodleform {
             $coloroverridecss;
     }
 
+    /**
+     * Write the generated CSS to a file in this plugin's file area and return the file's URL
+     *
+     * @param string $css The CSS to write to the file
+     * @return string The URL to the saved file
+     */
     private function write_css_file(string $css) {
         global $CFG;
 

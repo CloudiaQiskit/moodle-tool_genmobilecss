@@ -31,10 +31,23 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->libdir.'/formslib.php');
 
+/**
+ * A form for choosing replacements for colors from the default mobile CSS file, plus adding extra custom CSS.
+ *
+ * @package    tool_genmobilecss
+ * @copyright  2020 Alison of Sheesania
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class color_form extends \moodleform {
-    // Maps numeric id => colorinfo.
+    /** @var string Maps numeric id => colorinfo. */
     private $colors = array();
 
+    /**
+     * Parses the default mobile CSS file to build a list of colors defined in it, mapped to numeric IDs. Called when
+     * the form is first created (not when it's displayed)
+     *
+     * @param string $css The default mobile CSS
+     */
     public function __construct(string $css = null) {
         $cache = \cache::make('tool_genmobilecss', 'colors');
 
@@ -81,8 +94,13 @@ class color_form extends \moodleform {
         parent::__construct();
     }
 
+    /**
+     * Displays a form for choosing replacement colors for the colors defined in the default mobile CSS, as well as
+     * adding other additional CSS. Called when the form is actually displayed.
+     */
     public function definition() {
-        // The JavaScript for this page is in amd/src/colorpicker.js.
+        // The JavaScript for this page is in amd/src/colorpicker.js; it handles nice color pickers for the color
+        // ...choosing fields and enables tabbing in the additional CSS text box.
         global $PAGE;
         $PAGE->requires->js_call_amd('tool_genmobilecss/colorpicker', 'init');
 
@@ -124,6 +142,13 @@ class color_form extends \moodleform {
         $this->add_action_buttons(false, get_string('colorformsubmit', 'tool_genmobilecss'));
     }
 
+    /**
+     * Returns any additional CSS the user added if they previously generated a custom CSS file using this plugin.
+     * Used to prefill the "additional CSS" field with the last custom CSS the user entered.
+     *
+     * @return string The additional CSS the user added, or an empty string if they did not add any or have not
+     * generated custom CSS with this tool before.
+     */
     private function get_existing_custom_css() {
         $cssfilemanager = new css_file_manager();
         $css = $cssfilemanager->get_file_contents();
@@ -137,8 +162,17 @@ class color_form extends \moodleform {
         return $withendtrimmed;
     }
 
+    /**
+     * Generates HTML for a small outlined box filled with the given color.
+     *
+     * @param int $colorid The ID of the color to preview
+     * @param string $color The CSS color code for the color to preview
+     * @param bool $isnewcolorpreview Is this a preview of a new (non-default) color?
+     * @return string The HTML for the preview box
+     */
     private function get_color_preview_div(int $colorid, string $color, bool $isnewcolorpreview) {
-        // Generates HTML for a small outlined box filled with the given color.
+        // Previews of new colors are hidden by default and need IDs so they can be displayed/hidden if a new color is
+        // ...chosen or not.
         $id = $isnewcolorpreview ? 'id="new-color-preview-' . $colorid . '"' : '';
         $hidden = $isnewcolorpreview ? 'display: none;' : '';
         return '<div ' . $id . ' style="background-color: ' . $color . '; ' .
@@ -147,7 +181,16 @@ class color_form extends \moodleform {
     }
 }
 
+/**
+ * Represents metadata about a color found in the default mobile CSS file.
+ *
+ * @package    tool_genmobilecss
+ * @copyright  2020 Alison of Sheesania
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class color_info {
+    /** @var string The CSS color code for the color */
     public $color = '';
+    /** @var int How many times this color is used in the default CSS */
     public $usedcount = 0;
 }

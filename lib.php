@@ -27,6 +27,14 @@
  * in the plugin's file area.
  *
  * The parameters are required by Moodle, but are all ignored in favor of just serving the custom CSS file.
+ *
+ * @param stdClass $course the course object; ignored
+ * @param stdClass $cm the course module object; ignored
+ * @param stdClass $context the context; ignored (always the system context)
+ * @param string $filearea the name of the file area; ignored (always the custom CSS file area)
+ * @param array $args extra arguments (itemid, path); ignored (always the id + path for the custom CSS file)
+ * @param bool $forcedownload whether or not force download; ignored (always no force download)
+ * @param array $options additional options affecting the file serving; ignored
  */
 function tool_genmobilecss_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     // No access restrictions - anyone can access the custom mobile CSS file, whether they're logged in or not.
