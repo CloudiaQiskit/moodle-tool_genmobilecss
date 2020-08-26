@@ -91,34 +91,36 @@ function choose_custom_colors_step() {
  * form that generates new custom CSS and makes it available to the user.
  */
 function generate_custom_css_step() {
-    // Find what replacement colors the user picked on the previous form. The format is colorid => new color.
-    $formdata = (new \tool_genmobilecss\color_form())->get_data();
-    // Get cached information about colors in the default CSS file. Needed to look up what original color each colorid
-    // ...represents.
-    $cache = cache::make('tool_genmobilecss', 'colors');
-    $colorinfo = $cache->get('colors');
-    $colorstoreplace = array();
+    if (data_submitted() && confirm_sesskey()) {
+        // Find what replacement colors the user picked on the previous form. The format is colorid => new color.
+        $formdata = (new \tool_genmobilecss\color_form())->get_data();
+        // Get cached information about colors in the default CSS file. Needed to look up what original color each colorid
+        // ...represents.
+        $cache = cache::make('tool_genmobilecss', 'colors');
+        $colorinfo = $cache->get('colors');
+        $colorstoreplace = array();
 
-    foreach (get_object_vars($formdata) as $colorid => $newcolor) {
-        // If the form field is one with a hex color code - i.e. one of the replacement color fields and not one of the
-        // ...other form items...
-        if (preg_match('/^#[\da-f]{3,8}$/i', $newcolor)) {
-            // Look up what original color this colorid represents, then map the old color to the new replacement color
-            // ...in $colorstoreplace.
-            $oldcolor = $colorinfo[$colorid]->color;
-            $colorstoreplace[$oldcolor] = $newcolor;
+        foreach (get_object_vars($formdata) as $colorid => $newcolor) {
+            // If the form field is one with a hex color code - i.e. one of the replacement color fields and not one of the
+            // ...other form items...
+            if (preg_match('/^#[\da-f]{3,8}$/i', $newcolor)) {
+                // Look up what original color this colorid represents, then map the old color to the new replacement color
+                // ...in $colorstoreplace.
+                $oldcolor = $colorinfo[$colorid]->color;
+                $colorstoreplace[$oldcolor] = $newcolor;
+            }
         }
-    }
 
-    // Also grab the form field for additional custom CSS.
-    $addlcss = '';
-    if (property_exists($formdata, 'customcss')) {
-        $addlcss = $formdata->customcss;
-    }
+        // Also grab the form field for additional custom CSS.
+        $addlcss = '';
+        if (property_exists($formdata, 'customcss')) {
+            $addlcss = $formdata->customcss;
+        }
 
-    // Okay, now we can actually start working on generating the new CSS file!
-    $conclusionform = new \tool_genmobilecss\conclusion_form($colorstoreplace, $addlcss);
-    $conclusionform->display();
+        // Okay, now we can actually start working on generating the new CSS file!
+        $conclusionform = new \tool_genmobilecss\conclusion_form($colorstoreplace, $addlcss);
+        $conclusionform->display();
+    }
 }
 
 /**
