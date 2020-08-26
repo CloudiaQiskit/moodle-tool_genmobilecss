@@ -23,11 +23,11 @@
  */
 
 $string['pluginname'] = 'Generate custom CSS for Moodle Mobile';
-$string['introtext'] = "This is a tool for generating custom CSS for the Moodle Mobile app, especially overriding the default colors. It will guide you through three simple steps:";
-$string['introstep1'] = "1. Download the latest Moodle Mobile default CSS.";
-$string['introstep2'] = "2. View the latest default CSS's color scheme and pick out any alternate colors you prefer, plus add any extra custom CSS.";
-$string['introstep3'] = "3. Generate a custom CSS file to override the default colors and add your extra custom CSS, and set it as your Moodle Mobile CSS.";
-$string['introcalltoaction'] = "Ready to get started? This download may take a moment!";
+$string['introtext'] = 'This is a tool for generating custom CSS for the Moodle Mobile app, especially overriding the default colors. It will guide you through three simple steps:';
+$string['introstep1'] = '1. Download the latest Moodle Mobile default CSS.';
+$string['introstep2'] = '2. View the latest default CSS\'s color scheme and pick out any alternate colors you prefer, plus add any extra custom CSS.';
+$string['introstep3'] = '3. Generate a custom CSS file to override the default colors and add your extra custom CSS, and set it as your Moodle Mobile CSS.';
+$string['introcalltoaction'] = 'Ready to get started? This download may take a moment!';
 $string['downloadmobilecss'] = 'Download latest mobile CSS';
 $string['cachedef_mobilecss'] = 'The current default CSS file for the Moodle Mobile app';
 $string['cachedef_colors'] = 'Information about colors found in the default CSS file';

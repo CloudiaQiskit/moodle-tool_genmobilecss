@@ -123,7 +123,7 @@ class color_form extends \moodleform {
                 $colorinfo->color, array('class' => 'colorpicker-text', 'data-color' => $colorinfo->color));
             $mform->setType($colorid, PARAM_TEXT);
             $mform->addElement('static', 'description-' . $colorid, '',
-                    $colorinfo->usedcount . " " . get_string('uses', 'tool_genmobilecss'));
+                    $colorinfo->usedcount . ' ' . get_string('uses', 'tool_genmobilecss'));
 
             // Elements for previewing old + new colors.
             $previewgroup = array();

@@ -33,7 +33,7 @@ $pagetitle = get_string('pluginname', 'tool_genmobilecss');
 
 $context = context_system::instance();
 
-$url = new moodle_url("/admin/tool/genmobilecss/index.php");
+$url = new moodle_url('/admin/tool/genmobilecss/index.php');
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_title($pagetitle);
