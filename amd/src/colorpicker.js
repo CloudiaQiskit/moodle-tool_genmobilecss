@@ -28,8 +28,8 @@ const setupColorPicker = ($, Pickr, input) => {
 
   // Ids for components for previewing a new color that's been selected. Will be hidden when there isn't a new color
   // selected
-  const convertMessageId = `#convert-message-${colorId}`;
-  const newColorPreviewId = `#new-color-preview-${colorId}`;
+  const convertMessageSelector = `.path-admin-tool-genmobilecss #convert-message-${colorId}`;
+  const newColorPreviewSelector = `.path-admin-tool-genmobilecss #new-color-preview-${colorId}`;
 
   // The color set in the pickr is only "staged" - it won't actually be saved and included with the form POST
   // until the *input's* value is set to the color.
@@ -58,8 +58,8 @@ const setupColorPicker = ($, Pickr, input) => {
         input.value = newColor;
 
         // preview the new color by unhiding the relevant components and telling them about the new color
-        $(convertMessageId).show();
-        const newColorPreview = $(newColorPreviewId);
+        $(convertMessageSelector).show();
+        const newColorPreview = $(newColorPreviewSelector);
         newColorPreview.css("background-color", newColor);
         newColorPreview.show();
       }
@@ -69,8 +69,8 @@ const setupColorPicker = ($, Pickr, input) => {
       // unset any new color and stop showing any previews of it
       pickr.setColor(originalColor);
       input.value = "";
-      $(convertMessageId).hide();
-      $(newColorPreviewId).hide();
+      $(convertMessageSelector).hide();
+      $(newColorPreviewSelector).hide();
     })
     .on("cancel", (pickr) => {
       pickr.hide();
@@ -79,7 +79,7 @@ const setupColorPicker = ($, Pickr, input) => {
 
 // Sets up color pickers for all the text fields for picking alternate colors
 const setupColorPickers = ($, Pickr) => {
-  const inputElements = document.querySelectorAll(".colorpicker-text input");
+  const inputElements = document.querySelectorAll(".path-admin-tool-genmobilecss .colorpicker-text input");
 
   // Only load the color picker when the input first becomes visible. This prevents loading 100+ color pickers all at
   // once when the page loads, making it freeze briefly
@@ -101,7 +101,7 @@ const setupColorPickers = ($, Pickr) => {
 // This code makes tab insert four spaces in the text area instead, which is handy if you're entering indented CSS.
 const setupTabInCustomCSSTextarea = ($) => {
   // from https://stackoverflow.com/a/6637396/4954731
-  $(document).delegate("#id_customcss", "keydown", function (e) {
+  $(document).delegate(".path-admin-tool-genmobilecss #id_customcss", "keydown", function (e) {
     var keyCode = e.keyCode || e.which;
 
     if (keyCode == 9) {
