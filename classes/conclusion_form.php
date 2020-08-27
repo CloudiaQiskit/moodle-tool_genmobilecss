@@ -75,50 +75,24 @@ class conclusion_form extends \moodleform {
     }
 
     /**
-     * Generate CSS rules to override the default colors with any alternate colors the user picked out.
+     * Find and replace colors the user wanted to override in the default CSS.
      *
      * @param array $colorstoreplace Map of original colors => the colors to replace them with
-     * @return string String of the CSS color rules we've built
+     * @return string String of the new CSS with colors to override replaced. It will be the same as the default CSS,
+     *      just with different colors.
      */
     private function generate_color_overrides(array $colorstoreplace) {
         // Grab the default CSS from the cache.
         $cache = \cache::make('tool_genmobilecss', 'mobilecss');
-        $oldcss = $cache->get('mobilecss');
-        $cssparser = new Parser($oldcss);
-        $cssdoc = $cssparser->parse();
+        $defaultcss = $cache->get('mobilecss');
+        $newcss = $defaultcss;
 
-        $newcss = new Document();
-
-        foreach ($cssdoc->getAllRuleSets() as $ruleset) {
-            foreach ($ruleset->getRules() as $rule) {
-                $value = $rule->getValue();
-                // If this CSS rule involves a color...
-                if ($value instanceof Color) {
-                    $color = (string) $value;
-                    // Check if this was one of the colors the user wanted to replace. If so, build a new rule with the
-                    // ...same selectors and rule, but using the alternate color instead. Then add it to our custom CSS.
-                    if (array_key_exists($color, $colorstoreplace)) {
-                        $newcolor = Color::parse(new ParserState($colorstoreplace[$color], Settings::create()));
-
-                        $newruleset = null;
-                        if ($ruleset instanceof AtRuleSet) {
-                            $newruleset = new AtRuleSet($ruleset->atRuleName(), $ruleset->atRuleArgs());
-                        } else if ($ruleset instanceof DeclarationBlock) {
-                            $newruleset = new DeclarationBlock();
-                            $newruleset->setSelectors($ruleset->getSelectors());
-                        }
-
-                        $newrule = new Rule($rule->getRule());
-                        $newrule->addValue($newcolor);
-                        $newrule->setIsImportant(true); // To ensure the default color will get overridden.
-
-                        $newruleset->addRule($newrule);
-                        $newcss->append($newruleset);
-                    }
-                }
-            }
+        // Replace all instances of each color the user wanted to replace with the alternate color they picked.
+        foreach ($colorstoreplace as $oldcolor => $newcolor) {
+            $newcss = str_replace($oldcolor, $newcolor, $newcss);
         }
-        return $newcss->render();
+
+        return $newcss;
     }
 
     /**
@@ -129,15 +103,16 @@ class conclusion_form extends \moodleform {
      * @return string The CSS strings properly concatenated into a full CSS file
      */
     private function add_addl_css(string $coloroverridecss, string $addlcss) {
+        // Additional CSS comes after the replaced colors CSS so it's easier to override rules from the default CSS.
         return
             "\* This is an automatically generated file. DO NOT EDIT *\\\n" .
             "\n" .
+            $coloroverridecss .
+            "\n\n" .
             "\* START ADDLCSS *\\\n" .
             $addlcss .
             "\n" .
-            "\* END ADDLCSS *\\\n" .
-            "\n" .
-            $coloroverridecss;
+            "\* END ADDLCSS *\\\n";
     }
 
     /**
