@@ -24,15 +24,6 @@
 
 namespace tool_genmobilecss;
 
-use Sabberworm\CSS\Parser;
-use Sabberworm\CSS\Value\Color;
-use Sabberworm\CSS\CSSList\Document;
-use Sabberworm\CSS\RuleSet\DeclarationBlock;
-use Sabberworm\CSS\RuleSet\AtRuleSet;
-use Sabberworm\CSS\Rule\Rule;
-use Sabberworm\CSS\Parsing\ParserState;
-use Sabberworm\CSS\Settings;
-
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->libdir.'/formslib.php');
