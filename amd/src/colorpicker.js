@@ -35,10 +35,10 @@ const setupColorPicker = ($, Pickr, input) => {
   // until the *input's* value is set to the color.
   const pickr = new Pickr({
     el: input,
-    useAsButton: true, // necessary for using a form input as a pickr
-    default: originalColor, // default to showing the original color in the pickr
+    useAsButton: true, // Necessary for using a form input as a pickr
+    "default": originalColor, // Default to showing the original color in the pickr
     theme: "classic",
-    swatches: null, // don't show any color suggestions
+    swatches: null, // Don't show any color suggestions
     components: {
       preview: true,
       opacity: true,
@@ -53,11 +53,11 @@ const setupColorPicker = ($, Pickr, input) => {
   })
     .on("save", (color) => {
       if (color) {
-        // save the new color by setting it in the input
+        // Save the new color by setting it in the input
         const newColor = color.toHEXA().toString(0);
         input.value = newColor;
 
-        // preview the new color by unhiding the relevant components and telling them about the new color
+        // Preview the new color by unhiding the relevant components and telling them about the new color
         $(convertMessageSelector).show();
         const newColorPreview = $(newColorPreviewSelector);
         newColorPreview.css("background-color", newColor);
@@ -66,7 +66,7 @@ const setupColorPicker = ($, Pickr, input) => {
       pickr.hide();
     })
     .on("clear", () => {
-      // unset any new color and stop showing any previews of it
+      // Unset any new color and stop showing any previews of it
       pickr.setColor(originalColor);
       input.value = "";
       $(convertMessageSelector).hide();
@@ -100,8 +100,8 @@ const setupColorPickers = ($, Pickr) => {
 // Enable tabbing in the text area for entering custom CSS. By default, tab just brings you to the next form field.
 // This code makes tab insert four spaces in the text area instead, which is handy if you're entering indented CSS.
 const setupTabInCustomCSSTextarea = ($) => {
-  // from https://stackoverflow.com/a/6637396/4954731
-  $(document).delegate(".path-admin-tool-genmobilecss #id_customcss", "keydown", function (e) {
+  // From https://stackoverflow.com/a/6637396/4954731
+  $(document).delegate(".path-admin-tool-genmobilecss #id_customcss", "keydown", function(e) {
     var keyCode = e.keyCode || e.which;
 
     if (keyCode == 9) {
@@ -109,26 +109,26 @@ const setupTabInCustomCSSTextarea = ($) => {
       var start = this.selectionStart;
       var end = this.selectionEnd;
 
-      // set textarea value to: text before caret + tab + text after caret
+      // Set textarea value to: text before caret + tab + text after caret
       $(this).val(
         $(this).val().substring(0, start) +
           "    " +
           $(this).val().substring(end)
       );
 
-      // put caret at right position again
+      // Put caret at right position again
       this.selectionStart = this.selectionEnd = start + 4;
     }
   });
 };
 
-// require.js sorcery demanded by Moodle
+// Require.js sorcery demanded by Moodle
 define([
   "jquery",
   "https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js",
-], function ($, Pickr) {
+], function($, Pickr) {
   return {
-    init: function () {
+    init: function() {
       setupColorPickers($, Pickr);
       setupTabInCustomCSSTextarea($);
     },
