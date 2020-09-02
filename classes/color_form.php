@@ -157,8 +157,8 @@ class color_form extends \moodleform {
         }
         // Any extra custom CSS (i.e. not color overriding stuff) included by this tool is delimited by
         // .../* START ADDLCSS */ /* END ADDLCSS */ comments, so parse out only that text.
-        $withbeginningtrimmed = explode('\* START ADDLCSS *\\', $css)[1];
-        $withendtrimmed = explode("\n\* END ADDLCSS *\\", $withbeginningtrimmed)[0];
+        $withbeginningtrimmed = explode("/* START ADDLCSS */", $css)[1];
+        $withendtrimmed = explode("\n/* END ADDLCSS */", $withbeginningtrimmed)[0];
         return $withendtrimmed;
     }
 
