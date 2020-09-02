@@ -96,14 +96,14 @@ class conclusion_form extends \moodleform {
     private function add_addl_css(string $coloroverridecss, string $addlcss) {
         // Additional CSS comes after the replaced colors CSS so it's easier to override rules from the default CSS.
         return
-            "\* This is an automatically generated file. DO NOT EDIT *\\\n" .
+            "/* This is an automatically generated file. DO NOT EDIT */\n" .
             "\n" .
             $coloroverridecss .
             "\n\n" .
-            "\* START ADDLCSS *\\\n" .
+            "/* START ADDLCSS */\n" .
             $addlcss .
             "\n" .
-            "\* END ADDLCSS *\\\n";
+            "/* END ADDLCSS */\n";
     }
 
     /**
