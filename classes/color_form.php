@@ -59,6 +59,10 @@ class color_form extends \moodleform {
         } else {
             // Maps original color => colorinfo. Used to build up color information before converting into a colorid
             // ...based array.
+
+            // Make sure there's enough memory to parse a likely very large CSS file.
+            raise_memory_limit(MEMORY_EXTRA);
+
             $colorsbycolor = array();
             $cssparser = new Parser($css);
             $cssdoc = $cssparser->parse();

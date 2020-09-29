@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$plugin->version   = 2020090200;
+$plugin->version   = 2020092900;
 $plugin->requires  = 2019111804;
 $plugin->component = 'tool_genmobilecss';
 $plugin->dependencies = [];
