@@ -30,4 +30,4 @@ $plugin->requires  = 2019111804;
 $plugin->component = 'tool_genmobilecss';
 $plugin->dependencies = [];
 $plugin->maturity = MATURITY_BETA;
-$plugin->release = '0.2';
+$plugin->release = '0.3';
