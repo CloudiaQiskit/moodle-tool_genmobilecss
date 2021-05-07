@@ -79,7 +79,7 @@ function download_default_css_step() {
  * choosing alternate colors.
  */
 function choose_custom_colors_step() {
-    $response = file_get_contents('https://mobileapp.moodledemo.net/build/main.css');
+    $response = file_get_contents('https://integration.apps.moodledemo.net/build/main.css');
     $cache = cache::make('tool_genmobilecss', 'mobilecss');
     $cache->set('mobilecss', $response);
     $colorform = new \tool_genmobilecss\color_form($response);
